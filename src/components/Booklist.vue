@@ -97,6 +97,7 @@
           booklistid: '',
           booklistname: '',
           username: '',
+          currentusername: '',
           email: '',
           comment: '',
           useremail: '',

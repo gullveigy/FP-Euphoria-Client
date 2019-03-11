@@ -9,6 +9,7 @@ import UserProfile from '@/components/UserProfile'
 import Postings from '@/components/Postings'
 import Booklist from '@/components/Booklist'
 
+
 import firebase from 'firebase'
 
 Vue.use(Router);
