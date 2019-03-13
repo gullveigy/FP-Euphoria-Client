@@ -7,6 +7,10 @@ export default {
 
   fetchUserDiscussion (email) {
     return Api().get(`/userdiscussions/${email}`)
+  },
+
+  fetchOneDiscussion (id) {
+    return Api().get(`/discussions/${id}`)
   }
 }
 

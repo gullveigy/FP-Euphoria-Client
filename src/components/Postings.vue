@@ -14,47 +14,21 @@
   <!-- /.page-header-->
   <!-- news -->
   <div class="card-section">
-    <div class="container"  v-for="(Discussion, index) in Discussions" :key="index">
+    <div class="container">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4" v-for="(Discussion, index) in Discussions" :key="index">
           <div class="card-content">
             <div class="card-img">
               <img src="https://placeimg.com/380/230/nature" alt="">
-              <span><h4>heading</h4></span>
             </div>
             <div class="card-desc">
               <h3>{{Discussion.title}}</h3>
               <p>{{Discussion.author}}</p>
-              <a href="#" class="btn-card">Read</a>
+              <a class="btn-card" v-on:click="getDiscussionIDandContent(Discussion._id)">Read</a>
             </div>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="card-content">
-            <div class="card-img">
-              <img src="https://placeimg.com/380/230/animals" alt="">
-              <span><h4>heading2</h4></span>
-            </div>
-            <div class="card-desc">
-              <h3>{{Discussion.title}}</h3>
-              <p>{{Discussion.author}}</p>
-              <a href="#" class="btn-card">Read</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-content">
-            <div class="card-img">
-              <img src="https://placeimg.com/380/230/tech" alt="">
-              <span><h4>heading3</h4></span>
-            </div>
-            <div class="card-desc">
-              <h3>{{Discussion.title}}</h3>
-              <p>{{Discussion.author}}</p>
-              <a href="#" class="btn-card">Read</a>
-            </div>
-          </div>
-        </div>
+
 
 
     </div>
@@ -77,11 +51,13 @@
               Discussions: [],
               title: '',
               author: '',
-              date: ''
+              date: '',
+              id: ''
           }
         },
         created (){
           this.getDiscussions();
+          this.getDiscussionIDandContent();
 
         },
         methods: {
@@ -94,6 +70,17 @@
                   console.log(this.Discussions)
                 }
               })
+          },
+          getDiscussionIDandContent: function (Did) {
+            console.log(Did);
+            if (Did) {
+              this.$router.push({
+                name: 'Posts',
+                params: {
+                  id: Did
+                }
+              })
+            }
           }
         }
     }
@@ -122,29 +109,14 @@
   .page-title { font-size: 46px; line-height: 1; color: #fff; font-weight: 600; text-align: center; }
 
   .card-section { position: relative; bottom: 60px; }
-  .card-block { padding: 50px; }
-  .section-title { padding: 2px; }
 
 
-  div.card-block {
-    width: 350px;
-    height:250px;
-    margin-top: 5px;
-  }
-
-  div .section-title {
-    width: 250px;
-    height: 150px;
-  }
 
   div .section-title i {
     color: black;
     padding: 10px 20px;
     cursor: pointer;
   }
-
-
-
 
 
   section{

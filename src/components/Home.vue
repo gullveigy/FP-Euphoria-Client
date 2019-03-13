@@ -128,7 +128,7 @@ a {
   color: #42b983;
 }
   #footer {
-    background: rgba(105, 128, 117, 0.85);
+    background: rgba(28, 34, 31, 0.91);
   }
 
   #footer ul {

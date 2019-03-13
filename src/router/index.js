@@ -8,7 +8,7 @@ import LogOut from '@/components/LogOut'
 import UserProfile from '@/components/UserProfile'
 import Postings from '@/components/Postings'
 import Booklist from '@/components/Booklist'
-
+import Posts from '@/components/Posts'
 
 import firebase from 'firebase'
 
@@ -49,6 +49,11 @@ const router = new Router({
       path: '/douban',
       name: 'Postings',
       component: Postings
+    },
+    {
+      path: '/postcontent',
+      name: 'Posts',
+      component: Posts
     },
     {
       path: '/booklist',
