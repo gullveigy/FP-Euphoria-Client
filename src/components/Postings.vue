@@ -1,20 +1,47 @@
 <template>
+  <div>
   <div id="postings-page">
   <div class="page-header">
     <div class="container">
       <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="col-md-12">
           <div class="page-caption">
+
+
             <h1 class="page-title">Forum - Find the Same Soul</h1>
+
+
+            <div id="custom-search-input">
+              <div class="input-group col-md-12">
+                <input type="text" class="  search-query form-control" placeholder="Search" />
+                <span class="input-group-btn">
+                                    <button class="btn btn-danger" type="button">
+                                        <span class="fa fa-search"></span>
+                                    </button>
+                                </span>
+              </div>
+            </div>
+
+
+
           </div>
         </div>
       </div>
     </div>
   </div>
   <!-- /.page-header-->
+
+
+
+
+
+
+
   <!-- news -->
+
   <div class="card-section">
     <div class="container">
+
       <div class="row">
         <div class="col-md-4" v-for="(Discussion, index) in Discussions" :key="index">
           <div class="card-content">
@@ -28,20 +55,27 @@
             </div>
           </div>
         </div>
-
-
-
     </div>
   </div>
   </div>
+
+
+
+
+  </div>
+
+    <subfooter></subfooter>
+
   </div>
 </template>
 
 <script>
 
   import firebase from 'firebase'
+  import Subfooter from '@/components/Subfooter'
 
   import discussionservice from '@/services/discussionservice'
+
 
 
     export default {
@@ -54,6 +88,9 @@
               date: '',
               id: ''
           }
+        },
+        components: {
+          'subfooter': Subfooter
         },
         created (){
           this.getDiscussions();
@@ -104,11 +141,11 @@
 
 
 
-  .page-header { background: url(https://easetemplate.com/free-website-templates/hike/images/pageheader.jpg)no-repeat; position: relative; background-size: cover; }
-  .page-caption { padding-top: 140px; padding-bottom: 144px; }
+  .page-header { position: relative;}
+  .page-caption { padding-top: 140px; padding-bottom: 144px;}
   .page-title { font-size: 46px; line-height: 1; color: #fff; font-weight: 600; text-align: center; }
 
-  .card-section { position: relative; bottom: 60px; }
+  .card-section { position: relative; bottom: 10px; }
 
 
 
@@ -124,7 +161,7 @@
   }
 
   div .col-md-4 {
-    margin-top:10px;
+    margin-top:25px;
   }
 
 
@@ -149,9 +186,9 @@
 
   .card-img span {
     position: absolute;
-    top: 15%;
+    top: 10%;
     left: 12%;
-    background: #1ABC9C;
+    background: #648073;
     padding: 6px;
     color: #fff;
     font-size: 12px;
@@ -194,7 +231,7 @@
     font-family: 'Raleway', sans-serif;
   }
   .btn-card{
-    background-color: #1ABC9C;
+    background-color: rgba(124, 70, 76, 0.75);
     color: #fff;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
     padding: .84rem 2.14rem;
@@ -215,12 +252,62 @@
     color: #fff;
   }
   .btn-card:hover {
-    background: orange;
+    background: #7c464c;
   }
   a.btn-card {
     text-decoration: none;
     color: #fff;
   }
+
+
+
+
+
+  #custom-search-input {
+    margin:auto;
+    margin-top: 25px;
+    padding: 0;
+    width: 600px;
+    position: center;
+  }
+
+  #custom-search-input .search-query {
+    padding-right: 5px;
+    padding-right: 4px \9;
+    padding-left: 5px;
+    padding-left: 4px \9;
+    /* IE7-8 doesn't have border-radius, so don't indent the padding */
+
+    margin-bottom: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+  }
+
+  #custom-search-input button {
+    border: 0;
+    background: none;
+    /** belows styles are working good */
+    padding: 2px 5px;
+    margin-top: 2px;
+    position: relative;
+    left: -28px;
+    /* IE7-8 doesn't have border-radius, so don't indent the padding */
+    margin-bottom: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color: #1c221f;
+  }
+
+  .search-query:focus + button {
+    z-index: 3;
+  }
+
+
+
+
+
 
 
 

@@ -112,6 +112,7 @@
   import userservice from '@/services/userservice'
   import discussionservice from '@/services/discussionservice'
   import booklistdirservice from '@/services/booklistdirservice'
+  import Subfooter from "./Subfooter";
 
 
 
@@ -121,8 +122,8 @@
     export default {
 
         name: "UserPrefile",
-
-        data (){
+      components: {Subfooter},
+      data (){
           return {
             username: 'YOU NEED TO LOGIN FIRST',
             useremail: '',

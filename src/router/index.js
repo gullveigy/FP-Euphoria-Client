@@ -9,6 +9,7 @@ import UserProfile from '@/components/UserProfile'
 import Postings from '@/components/Postings'
 import Booklist from '@/components/Booklist'
 import Posts from '@/components/Posts'
+import AddPost from '@/components/AddPost'
 
 import firebase from 'firebase'
 
@@ -49,6 +50,11 @@ const router = new Router({
       path: '/douban',
       name: 'Postings',
       component: Postings
+    },
+    {
+      path: '/addpost',
+      name: 'AddPost',
+      component: AddPost
     },
     {
       path: '/postcontent',
