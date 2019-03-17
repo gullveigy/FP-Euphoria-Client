@@ -28,10 +28,41 @@
 
             </div>
           </div>
-
-
         </div>
+
+
+
+
+        <div class="container">
+          <div class="row">
+
+
+            <div class="col-md-12">
+
+              <div class="widget-area no-padding blank">
+                <div class="status-upload">
+                  <h2 class="page-header">Add Comments</h2>
+                  <form>
+                    <textarea v-model="commenttext" placeholder="Say Something ?" ></textarea>
+                    <button type="button" class="btn btn-success green" @click="addDiscomment()" v-b-modal="'myModal'"><i class="fa fa-share"></i> Comment</button>
+                  </form>
+
+                  <b-modal id="myModal">
+                    <p>You Have Comment Successfully! </p>
+                  </b-modal>
+
+                </div><!-- Status Upload  -->
+              </div><!-- Widget Area -->
+            </div>
+
+          </div>
+        </div>
+
+
+
+
       </div>
+
     </div>
   </div>
 
@@ -42,22 +73,17 @@
         <h2 class="page-header">Comments</h2>
         <section class="comment-list">
           <!-- First Comment -->
-          <article class="row">
-            <div class="col-md-2.5 col-sm-2.5 hidden-xs">
-              <figure class="thumbnail">
-                <img class="img-responsive" src="https://s.tcdn.co/e78/90b/e7890b10-1c4c-3cd4-a176-4e1010807ace/192/1.png" />
-              </figure>
-            </div>
+          <article class="row" v-for="(discomment, index) in discomments" :key="index">
             <div class="col-md-9 col-sm-9">
 
                 <div class="panel-body">
                   <header class="text-left">
-                    <div class="comment-user"><i class="fa fa-user"></i> That Guy</div>
-                    <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+                    <div class="comment-user"><i class="fa fa-user"></i> {{discomment.username}}</div>
+                    <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> {{discomment.date}}</time>
                   </header>
                   <div class="comment-post">
                     <p3>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                      {{discomment.content}}
                     </p3>
                   </div>
                   <p class="text-right"><a href="#" class="btn btn-default btn-sm"><i class="fa fa-reply"></i> reply</a></p>
@@ -75,21 +101,31 @@
 
 <script>
 
+  import firebase from 'firebase'
   import discussionservice from '@/services/discussionservice'
+  import discommentservice from '@/services/discommentservice'
+  import userservice from '@/services/userservice'
 
     export default {
         name: "Forum",
         data () {
           return {
             discussion: [],
+            discomments: [],
+            info:[],
             title: '',
             author: '',
             date: '',
-            content: ''
+            username:'',
+            content: '',
+            commenttext: '',
+            useremail: ''
           }
         },
         created () {
           this.getOneDiscussion();
+          this.getDiscomment();
+          this.addDiscomment();
         },
         methods: {
           getOneDiscussion: function () {
@@ -105,6 +141,61 @@
 
                 }
               })
+          },
+          getDiscomment: function () {
+            discommentservice.fetchDiscommentsNow(this.$route.params.id)
+              .then(response => {
+                if (response) {
+                  this.discomments = response.data;
+                  console.log(this.discomments)
+                }
+
+              })
+          },
+          addDiscomment: function () {
+            if (firebase.auth().currentUser) {
+
+              var useremail = firebase.auth().currentUser.email;
+              console.log(useremail);
+              userservice.fetchOneUser(useremail)
+                .then(response => {
+                  if (response) {
+                    this.info = response.data;
+                    console.log(this.info);
+                  }
+                });
+
+              var discomment = {
+                username: this.info[0].username,
+                discussionid: this.$route.params.id,
+                content: this.commenttext,
+                date: '',
+                upvotes: 0,
+                downvotes: 0
+              };
+              discommentservice.addOneDiscomment(discomment)
+                .then(response => {
+                  console.log(response.data);
+                  this.getDiscomment()
+                });
+
+            } else {
+              this.$swal({
+                title: 'You need to login first!',
+                text: 'You can\'t do this action',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'OK, Go login',
+                cancelButtonText: 'No, thx',
+                showCloseButton: true
+                // showLoaderOnConfirm: true
+              }).then((result) => {
+                if (result.value === true) {
+                  this.$router.replace('/login')
+                } else this.$router.replace('/')
+              })
+            }
+
           }
         }
     }
@@ -113,13 +204,13 @@
 <style scoped>
 
   #posts {
-    background: url("../assets/whale7.jpg")repeat fixed;
+    background: url("../assets/whale4.jpg")repeat fixed;
     background-size: auto 100%;
   }
 
   div {
     text-align: left;
-    background: rgba(240, 248, 255, 0.42);
+    background: #fff1d2;
     color: black;
   }
 
@@ -180,6 +271,131 @@
   p3 {
     margin-top: 25px;
     font-size: 11pt;
+  }
+
+  p {
+    font-size: 13pt;
+    color: black
+  }
+
+
+
+
+
+
+
+  body .no-padding {
+    padding: 0;
+  }
+  .widget-area {
+    background-color: #fff;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 0 16px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 0 0 16px rgba(0, 0, 0, 0.05);
+    -ms-box-shadow: 0 0 16px rgba(0, 0, 0, 0.05);
+    -o-box-shadow: 0 0 16px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.05);
+    float: left;
+    margin-top: 30px;
+    padding: 25px 30px;
+    position: relative;
+    width: 100%;
+  }
+  .status-upload {
+    background: none repeat scroll 0 0 #f5f5f5;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    float: left;
+    width: 100%;
+  }
+  .status-upload form {
+    float: left;
+    width: 100%;
+  }
+  .status-upload form textarea {
+    background: none repeat scroll 0 0 #fff;
+    border: medium none;
+    -webkit-border-radius: 4px 4px 0 0;
+    -moz-border-radius: 4px 4px 0 0;
+    -ms-border-radius: 4px 4px 0 0;
+    -o-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+    color: #777777;
+    float: left;
+    font-family: Lato;
+    font-size: 14px;
+    height: 142px;
+    letter-spacing: 0.3px;
+    padding: 20px;
+    width: 100%;
+    resize:vertical;
+    outline:none;
+    border: 1px solid #F2F2F2;
+  }
+
+  .status-upload ul {
+    float: left;
+    list-style: none outside none;
+    margin: 0;
+    padding: 0 0 0 15px;
+    width: auto;
+  }
+  .status-upload ul > li {
+    float: left;
+  }
+  .status-upload ul > li > a {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    color: #777777;
+    float: left;
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+    margin: 10px 0 10px 10px;
+    text-align: center;
+    -webkit-transition: all 0.4s ease 0s;
+    -moz-transition: all 0.4s ease 0s;
+    -ms-transition: all 0.4s ease 0s;
+    -o-transition: all 0.4s ease 0s;
+    transition: all 0.4s ease 0s;
+    width: 30px;
+    cursor: pointer;
+  }
+  .status-upload ul > li > a:hover {
+    background: none repeat scroll 0 0 #606060;
+    color: #fff;
+  }
+  .status-upload form button {
+    border: medium none;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    color: #fff;
+    float: right;
+    font-family: Lato;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    margin-right: 9px;
+    margin-top: 9px;
+    padding: 6px 15px;
+  }
+  .dropdown > a > span.green:before {
+    border-left-color: #2dcb73;
+  }
+  .status-upload form button > i {
+    margin-right: 7px;
   }
 
 </style>

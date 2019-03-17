@@ -104,6 +104,7 @@
           info: '',
           booklists: [],
           Bcomments: [],
+          info: [],
           props: ['_id'],
           errors: [],
           columns: ['_id', 'bookname', 'author','date', 'remove'],
@@ -194,8 +195,18 @@
       },
       addComments: function () {
         if (firebase.auth().currentUser) {
+          var useremail = firebase.auth().currentUser.email;
+          console.log(useremail);
+          userservice.fetchOneUser(useremail)
+            .then(response => {
+              if (response) {
+                this.info = response.data;
+                console.log(this.info);
+              }
+            });
+
           var Bcomment = {
-            username: this.username,
+            username: this.info[0].username,
             booklistname: this.messagetitle,
             booklistid: this.$route.params.id,
             comment: this.comment,
