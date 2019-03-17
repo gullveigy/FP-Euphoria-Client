@@ -7,7 +7,7 @@
       <li><a href="#/addpost">
         <i class="fa fa-plus-circle my-float"></i>
       </a></li>
-      <li><a href="#">
+      <li><a>
         <i class="fa fa-spinner my-float"></i>
       </a></li>
       <li><a href="#">
@@ -18,8 +18,28 @@
 </template>
 
 <script>
+
+
+
     export default {
-        name: "Subfooter"
+        name: "Subfooter",
+        data (){
+          return {
+            Discussions: [],
+            title: '',
+            author: '',
+            date: '',
+            id: ''
+          }
+        },
+      created (){
+
+
+      },
+      methods: {
+
+
+      }
     }
 </script>
 

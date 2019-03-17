@@ -10,6 +10,7 @@ import Postings from '@/components/Postings'
 import Booklist from '@/components/Booklist'
 import Posts from '@/components/Posts'
 import AddPost from '@/components/AddPost'
+import Contact from '@/components/Contact'
 
 import firebase from 'firebase'
 
@@ -65,6 +66,11 @@ const router = new Router({
       path: '/booklist',
       name: 'Booklist',
       component: Booklist
+    },
+    {
+      path: '/contact',
+      name: 'Contact',
+      component: Contact
     }
   ]
 });

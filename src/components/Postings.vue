@@ -13,10 +13,10 @@
 
             <div id="custom-search-input">
               <div class="input-group col-md-12">
-                <input type="text" class="  search-query form-control" placeholder="Search" />
+                <input type="text" v-model="search" class="  search-query form-control" placeholder="Search" />
                 <span class="input-group-btn">
                                     <button class="btn btn-danger" type="button">
-                                        <span class="fa fa-search"></span>
+                                        <span class="fa fa-search" @click="searchpost()"></span>
                                     </button>
                                 </span>
               </div>
@@ -42,7 +42,7 @@
   <div class="card-section">
     <div class="container">
 
-      <div class="row">
+      <div class="row" v-if="this.search === ''">
         <div class="col-md-4" v-for="(Discussion, index) in Discussions" :key="index">
           <div class="card-content">
             <div class="card-img">
@@ -56,6 +56,22 @@
           </div>
         </div>
     </div>
+
+      <div class="row" v-else="this.search !== ''">
+        <div class="col-md-4" v-for="(newDiscussion, index) in newDiscussions" :key="index">
+          <div class="card-content">
+            <div class="card-img">
+              <img src="https://placeimg.com/380/230/nature" alt="">
+            </div>
+            <div class="card-desc">
+              <h3>{{newDiscussion.title}}</h3>
+              <p>{{newDiscussion.author}}</p>
+              <a class="btn-card" v-on:click="getDiscussionIDandContent(Discussion._id)">Read</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
   </div>
   </div>
 
@@ -72,6 +88,7 @@
 <script>
 
   import firebase from 'firebase'
+  import Vue from 'vue'
   import Subfooter from '@/components/Subfooter'
 
   import discussionservice from '@/services/discussionservice'
@@ -83,10 +100,12 @@
         data (){
           return {
               Discussions: [],
+              newDiscussions:[],
               title: '',
               author: '',
               date: '',
-              id: ''
+              id: '',
+              search: ''
           }
         },
         components: {
@@ -95,6 +114,7 @@
         created (){
           this.getDiscussions();
           this.getDiscussionIDandContent();
+          this.searchpost();
 
         },
         methods: {
@@ -108,6 +128,18 @@
                 }
               })
           },
+          searchpost: function () {
+            discussionservice.fetchDiscussionsbyQuerySearch(this.search)
+              .then(response => {
+
+                if (response) {
+                  this.newDiscussions = response.data;
+                  console.log(this.newDiscussions);
+
+                }
+              })
+          },
+
           getDiscussionIDandContent: function (Did) {
             console.log(Did);
             if (Did) {

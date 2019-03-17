@@ -10,22 +10,30 @@
       <div class="row">
         <div class="col-md-12">
           <div class="form-group">
-            <input type="text" name="txtName" class="form-control" placeholder="Book Name *" value="" />
+            <input type="text" v-model="bookname" class="form-control" placeholder="Book Name *" value="" />
           </div>
           <div class="form-group">
-            <input type="text" name="txtEmail" class="form-control" placeholder="Title *" value="" />
-          </div>
-          <div class="form-group">
-            <input type="text" name="txtPhone" class="form-control" placeholder="Subtitle *" value="" />
+            <input type="text" v-model="posttitle" class="form-control" placeholder="Title *" value="" />
           </div>
         </div>
         <div class="col-md-12">
           <div class="form-group">
-            <textarea name="txtMsg" class="form-control" placeholder="Write down your unique opinion *" style="width: 100%; height: 150px;"></textarea>
+            <textarea name="txtMsg" v-model="posttext" placeholder="Write down your unique opinion *" style="width: 100%; height: 200px;"></textarea>
           </div>
           <div class="form-group">
-            <input type="submit" name="btnSubmit" class="btnContact" value="Send Message" />
+
+            <a class="btn btn-dark btn1" role="button" @click="addpost()" v-b-modal="'myModal'">Post New Content</a>
+
+
+
+            <a href="#/douban" class="btn btn-dark btn1" role="button">Back to Forum</a>
+
           </div>
+
+          <b-modal id="myModal">
+            <p>Successfully!!  You Can See Your Post in the Forum Now.</p>
+          </b-modal>
+
         </div>
       </div>
     </form>
@@ -35,8 +43,58 @@
 </template>
 
 <script>
+
+  import firebase from 'firebase'
+  import userservice from '@/services/userservice'
+  import discussionservice from '@/services/discussionservice'
+
     export default {
-        name: "AddPost"
+        name: "AddPost",
+      data () {
+        return {
+          bookname:'',
+          Bookname: '',
+          posttitle: '',
+          posttext: '',
+          info:[],
+          useremail: ''
+        }
+      },
+      created (){
+          this.addpost();
+      },
+      methods: {
+        addpost: function() {
+          if (firebase.auth().currentUser) {
+            var useremail = firebase.auth().currentUser.email;
+            console.log(useremail);
+            userservice.fetchOneUser(useremail)
+              .then(response => {
+
+                if (response) {
+                  this.info = response.data;
+                  console.log(this.info);
+
+                }
+              });
+
+            var newpost = {
+              username: this.info[0].username,
+              title: this.posttitle,
+              bookname: this.bookname,
+              content: this.posttext,
+              email: this.info[0].email,
+              date: '',
+              upvotes: 0
+            };
+
+            discussionservice.addNewPost(newpost);
+          }
+
+        }
+      }
+
+
     }
 </script>
 
@@ -60,6 +118,11 @@
   }
   .contact-form .form-control{
     border-radius:1rem;
+  }
+
+  textarea {
+    border-radius:1rem;
+    border-color: rgba(100, 128, 115, 0.43);
   }
   .contact-image{
     text-align: center;
@@ -101,5 +164,14 @@
     background-color: #0062cc;
     border: none;
     cursor: pointer;
+  }
+
+  p {
+    font-size: 13pt;
+    color: black;
+  }
+
+  a {
+    margin: auto;
   }
 </style>
