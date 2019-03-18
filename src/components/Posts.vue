@@ -148,7 +148,6 @@
                 if (response) {
                   this.discomments = response.data;
                   console.log(this.discomments);
-                  this.$set(this.downvotes,'tips', 'what is this?');
                   console.log(this.downvotes)
                 }
 

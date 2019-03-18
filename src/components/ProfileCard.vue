@@ -7,7 +7,7 @@
     <p class="title">Postings: (13)</p>
     <p class="title">Booklists: (9)</p>
     <p>Followers: (46)</p>
-    <p><a class="button">Profile</a></p>
+    <p><a href="#/otherprofile" class="button" @click="getUseridandgo(this.discussion[0].username)">Profile</a></p>
   </div>
 
 
@@ -31,12 +31,14 @@
           username: '',
           content: '',
           commenttext: '',
-          useremail: ''
+          useremail: '',
+          uname: ''
 
         }
       },
       created() {
         this.getDiscussionAuthor();
+        this.getUseridandgo();
       },
       methods: {
         getDiscussionAuthor: function () {
@@ -49,8 +51,21 @@
                 this.date = this.discussion[0].date;
                 this.author = this.discussion[0].username;
                 this.content = this.discussion[0].content;
+                console.log(this.author)
               }
             })
+        },
+        getUseridandgo: function (Uname) {
+          console.log(Uname);
+          if (Uname) {
+            this.$router.push({
+              name: 'OtherProfile',
+              params: {
+                uname: Uname
+              }
+            })
+          }
+
         }
       }
     }

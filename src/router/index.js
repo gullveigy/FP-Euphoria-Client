@@ -11,6 +11,7 @@ import Booklist from '@/components/Booklist'
 import Posts from '@/components/Posts'
 import AddPost from '@/components/AddPost'
 import Contact from '@/components/Contact'
+import OtherProfile from '@/components/OtherProfile'
 
 import firebase from 'firebase'
 
@@ -47,6 +48,12 @@ const router = new Router({
       name: 'UserProfile',
       component: UserProfile
     },
+    {
+      path: '/otherprofile',
+      name: 'OtherProfile',
+      component: OtherProfile
+    },
+
     {
       path: '/douban',
       name: 'Postings',

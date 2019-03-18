@@ -13,6 +13,11 @@ export default {
     return Api().get(`/booklilstdir/${id}`)
   },
 
+  addOneBooklist (newbooklist) {
+    return Api().post('/booklistdir', newbooklist,
+      { headers: { 'Content-type': 'application/json'} })
+  },
+
   upvoteforBookdir (id) {
     return Api().put(`/booklistdir/${id}/upvote`)
   }
