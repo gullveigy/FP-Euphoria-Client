@@ -26,6 +26,12 @@ export default {
     return Api().post('/discussions', newpost,
       { headers: { 'Content-type': 'application/json'} })
   },
+
+  upvoteforDiscussion (id) {
+    return Api().put(`/discussions/${id}/vote`)
+  }
+
+
 }
 
 

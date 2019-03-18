@@ -34,7 +34,8 @@
                   username: this.username,
                   email: this.email,
                   password: this.password,
-                  usertype: 'common'
+                  usertype: 'common',
+                  signature: 'Did not write anything'
                 };
 
                 userserivce.addUser(newuser);

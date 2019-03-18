@@ -1,9 +1,17 @@
 <template>
+  <div>
+
+    <profilecard></profilecard>
+
+    <postsnavbar></postsnavbar>
+
   <div id="posts">
   <div class="container">
     <div class="well">
       <div class="row">
-        <div class="col-md-12">
+
+
+        <div class="col-md-11">
 
           <div class="">
             <h1  class="hidden-xs hidden-sm"> {{this.title}}</h1>
@@ -13,24 +21,6 @@
             <hr>
             <p class="text-justify">{{this.content}}</p></div>
         </div>
-
-        <div class="col-lg-12 aboutme">
-          <div class="media">
-            <a class="pull-left" href="#">
-              <img class="media-object dp img-circle" src="http://startupcentral.in/wp-content/uploads/2013/07/105x81xyashshah-gridle-150x115.jpg.pagespeed.ic.9W-CH38VbP.jpg" style="width: 120px;height:120px;">
-            </a>
-            <div class="media-body">
-              <h4 class="media-heading">{{this.author}} <small> View Home Page</small></h4>
-              <hr style="margin:8px auto;border-bottom: 1px solid #ccc;">
-
-              <p style="text-align:left;">Yash Shah is co-founder of Ahmedabad-based Gridle, a cloud-based collaboration platform for small and medium businesses. The company is currently being incubated at CIIE Ahmedabad. Connect with him at LinkedIn.</p>
-              <span>Postings (90)  Booklist (13)  Followers (15)</span>
-
-            </div>
-          </div>
-        </div>
-
-
 
 
         <div class="container">
@@ -68,7 +58,10 @@
 
 
   <div class="container">
+
+
     <div class="row">
+
       <div class="col-md-12">
         <h2 class="page-header">Comments</h2>
         <section class="comment-list">
@@ -97,11 +90,14 @@
     </div>
   </div>
   </div>
+  </div>
 </template>
 
 <script>
 
   import firebase from 'firebase'
+  import ProfileCard from '@/components/ProfileCard'
+  import PostsNavbar from '@/components/PostsNavbar'
   import discussionservice from '@/services/discussionservice'
   import discommentservice from '@/services/discommentservice'
   import userservice from '@/services/userservice'
@@ -127,6 +123,10 @@
           this.getDiscomment();
           this.addDiscomment();
         },
+        components: {
+          'profilecard': ProfileCard,
+          'postsnavbar': PostsNavbar
+        },
         methods: {
           getOneDiscussion: function () {
             discussionservice.fetchOneDiscussion(this.$route.params.id)
@@ -147,7 +147,9 @@
               .then(response => {
                 if (response) {
                   this.discomments = response.data;
-                  console.log(this.discomments)
+                  console.log(this.discomments);
+                  this.$set(this.downvotes,'tips', 'what is this?');
+                  console.log(this.downvotes)
                 }
 
               })
@@ -214,6 +216,11 @@
     color: black;
   }
 
+  div .container {
+    width: 850px;
+    margin-right: 190px;
+  }
+
   h1 {
     margin-top: 35px;
   }
@@ -238,13 +245,6 @@
     margin-right: 5px;
   }
 
-  .media-body {
-    margin-left: 10px;
-  }
-
-  .media-object.dp.img-circle {
-    margin-top: 10px;
-  }
 
 
 
@@ -276,6 +276,46 @@
   p {
     font-size: 13pt;
     color: black
+  }
+
+
+
+  h2 {
+    margin-top: 30px;
+  }
+
+
+
+
+
+
+
+
+
+  .btn-circle {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.428571429;
+    border-radius: 15px;
+  }
+  .btn-circle.btn-lg {
+    width: 50px;
+    height: 50px;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 25px;
+  }
+  .btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    font-size: 24px;
+    line-height: 1.33;
+    border-radius: 35px;
   }
 
 
@@ -398,4 +438,113 @@
     margin-right: 7px;
   }
 
+
+
+  body {
+    background: #F1F3FA;
+  }
+
+  /* Profile container */
+  .profile {
+    margin: 20px 0;
+  }
+
+  /* Profile sidebar */
+  .profile-sidebar {
+    padding: 20px 0 10px 0;
+    background: #fff;
+  }
+
+  .profile-userpic img {
+    float: none;
+    margin: 0 auto;
+    width: 50%;
+    height: 50%;
+    -webkit-border-radius: 50% !important;
+    -moz-border-radius: 50% !important;
+    border-radius: 50% !important;
+  }
+
+  .profile-usertitle {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .profile-usertitle-name {
+    color: #5a7391;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 7px;
+  }
+
+  .profile-usertitle-job {
+    text-transform: uppercase;
+    color: #5b9bd1;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  .profile-userbuttons {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .profile-userbuttons .btn {
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 15px;
+    margin-right: 5px;
+  }
+
+  .profile-userbuttons .btn:last-child {
+    margin-right: 0px;
+  }
+
+  .profile-usermenu {
+    margin-top: 30px;
+  }
+
+  .profile-usermenu ul li {
+    border-bottom: 1px solid #f0f4f7;
+  }
+
+  .profile-usermenu ul li:last-child {
+    border-bottom: none;
+  }
+
+  .profile-usermenu ul li a {
+    color: #93a3b5;
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .profile-usermenu ul li a i {
+    margin-right: 8px;
+    font-size: 14px;
+  }
+
+  .profile-usermenu ul li a:hover {
+    background-color: #fafcfd;
+    color: #5b9bd1;
+  }
+
+  .profile-usermenu ul li.active {
+    border-bottom: none;
+  }
+
+  .profile-usermenu ul li.active a {
+    color: #5b9bd1;
+    background-color: #f6f9fb;
+    border-left: 2px solid #5b9bd1;
+    margin-left: -2px;
+  }
+
+  /* Profile Content */
+  .profile-content {
+    padding: 20px;
+    background: #fff;
+    min-height: 460px;
+  }
 </style>

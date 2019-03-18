@@ -115,10 +115,6 @@
   import Subfooter from "./Subfooter";
 
 
-
-
-
-
     export default {
 
         name: "UserPrefile",
@@ -133,7 +129,9 @@
             booklistdirs: [],
             booklistname:'',
             name: '',
-            upvotes: ''
+            upvotes: '',
+            signature: '',
+            newsignature: ''
 
 
 
@@ -159,6 +157,7 @@
                   this.info = response.data;
                   this.username = this.info[0].username;
                   this.email = this.info[0].email;
+                  this.signature = this.info[0].signature;
                   console.log(this.username);
 
                 }
@@ -189,6 +188,7 @@
 
             })
           },
+
           getlistID: function(bid) {
             console.log(bid);
             if (bid) {
@@ -265,11 +265,12 @@
     padding: 30px 40px;
     float:left;
     font-size: 2em;
+    text-align: left;
   }
   h2 a {
     text-decoration: none;
     color: #fc4400;
-    font-size: 13px;
+    font-size: 16px;
     display: block;
     padding: 5px 0px 0px 0px;
   }
@@ -355,6 +356,13 @@
     cursor: pointer;
   }
 
+
+
+
+  p6 {
+    color: black;
+    text-align: left;
+  }
 
 
 

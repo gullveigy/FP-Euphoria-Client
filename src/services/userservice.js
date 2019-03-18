@@ -1,11 +1,13 @@
 import Api from '@/services/api'
 
 export default {
-  fetchOneUser (email) {
+  fetchOneUser(email) {
     return Api().get(`/${email}/user`)
   },
-  addUser (user) {
+
+  addUser(user) {
     return Api().post('/users', user,
-      { headers: {'Content-type': 'application/json'} })
+      {headers: {'Content-type': 'application/json'}})
   }
 }
+
