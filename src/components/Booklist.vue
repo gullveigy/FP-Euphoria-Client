@@ -2,6 +2,14 @@
 <div>
   <div class="hero">
 
+    <div class="backtotop">
+      <ul>
+        <li><a>
+          <i class="fa fa-arrow-up my-float" @click="GobacktoTop()"></i>
+        </a></li>
+      </ul>
+    </div>
+
     <div id = "listboard">
 
       <h3 class="vue-title"><i class="fa fa-list" style="padding: 3px"></i> {{this.messagetitle}}</h3>
@@ -47,7 +55,10 @@
 
     </div>
 
+
+    <div class="comment-body">
     <h5>Comment For {{this.messagetitle}}</h5>
+
 
     <div id="comment" v-for="(Bcomment, index) in Bcomments" :key="index">
       <div id="card">
@@ -57,16 +68,19 @@
         </b-card-text>
         <sub-title>By  {{Bcomment.username}} at {{Bcomment.date}}</sub-title>
 
-        <i class="fa fa-pencil"></i>
+        <i class="fa fa-trash" @click="deleteBcomment(Bcomment._id)"></i>
         <i class="fa fa-heart" @click="upvoteBcomment(Bcomment._id)"> ({{Bcomment.upvotes}})</i>
       </b-card>
       </div>
     </div>
 
+    </div>
 
   </div>
 
-  </div>
+  <h6>Euphoria</h6>
+
+</div>
 
 </template>
 
@@ -124,8 +138,9 @@
     created () {
       this.loadBooklists();
       this.getMessageTitle();
-      this.getBdirComment();
       this.upvoteBcomment();
+      this.getBdirComment();
+      this.GobacktoTop();
     },
     methods: {
       getMessageTitle: function () {
@@ -220,6 +235,39 @@
             });
         }
       },
+      deleteBcomment: function (id) {
+        this.$swal({
+          title: 'Are you totaly sure?',
+          text: 'You can\'t Undo this action',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'OK Delete it',
+          cancelButtonText: 'Cancel',
+          showCloseButton: true
+          // showLoaderOnConfirm: true
+        }).then((result) => {
+          console.log('SWAL Result : ' + result.value);
+          if (result.value === true) {
+            booklistcommentservice.deleteOneBooklistcomment(id)
+              .then(response => {
+                // JSON responses are automatically parsed.
+                this.message = response.data;
+                console.log(this.message);
+                this.getBdirComment();
+                // Vue.nextTick(() => this.$refs.vuetable.refresh())
+                this.$swal('Deleted', 'You successfully deleted this comment ' + JSON.stringify(response.data, null, 5), 'success')
+              })
+              .catch(error => {
+                this.$swal('ERROR', 'Something went wrong trying to Delete ' + error, 'error')
+                this.errors.push(error);
+                console.log(error)
+              })
+          } else {
+            console.log('SWAL Else Result : ' + result.value);
+            this.$swal('Cancelled', 'Your Comment still Counts!', 'info')
+          }
+        })
+      },
       getCurrentUserInfo: function (){
         var useremail = firebase.auth().currentUser.email;
         console.log(useremail);
@@ -295,6 +343,10 @@
             this.$swal('Cancelled', 'Your Book still Counts!', 'info')
           }
         })
+      },
+      GobacktoTop: function () {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0
       }
     }
 
@@ -353,6 +405,10 @@
     margin-top: 35px;
   }
 
+  h6 {
+    margin-top: 55px;
+  }
+
   #comment {
     width: 900px;
     background:rgba(225,225,230,0.9);
@@ -369,10 +425,11 @@
     color: black;
     overflow: auto;
     text-align:left;
+    width: 900px;
   }
 
   #card div  {
-    width: 850px;
+    width: 890px;
   }
 
 
@@ -380,6 +437,7 @@
   #card i {
     padding: 10px;
     float: right;
+    cursor: pointer;
   }
 
   #card sub-title {
@@ -393,10 +451,42 @@
   }
 
 
+ div .comment-body {
+   margin-bottom: 15px;
+ }
 
 
 
+  ul{
+    position:fixed;
+    right:40px;
+    top: 650px;
+    padding-bottom:1px;
+    bottom:60px;
+    z-index:100;
+    cursor: pointer;
+  }
 
+  ul li{
+    list-style:none;
+    margin-bottom:10px;
+  }
+
+  ul li a{
+    background-color: #698075;
+    color:#FFF;
+    border-radius:50px;
+    text-align:center;
+    box-shadow: 2px 2px 3px #999;
+    width:60px;
+    height:60px;
+    display:block;
+  }
+
+  .my-float{
+    font-size:24px;
+    margin-top:18px;
+  }
 
 
 

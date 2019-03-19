@@ -12,7 +12,13 @@ export default {
 
   upvote (id) {
     return Api().put(`/booklistcomment/${id}/upvote`)
+  },
+
+  deleteOneBooklistcomment (id) {
+    return Api().delete(`/booklistcomment/${id}`)
   }
+
+
 }
 
 
