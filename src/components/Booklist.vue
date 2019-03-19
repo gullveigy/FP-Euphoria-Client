@@ -59,6 +59,9 @@
     <div class="comment-body">
     <h5>Comment For {{this.messagetitle}}</h5>
 
+    <div v-show="Bcomments.length===0">
+      <p style="font-size: 15px">No Comments Right Now! Waiting For You to Add ...</p>
+    </div>
 
     <div id="comment" v-for="(Bcomment, index) in Bcomments" :key="index">
       <div id="card">
@@ -489,6 +492,9 @@
   }
 
 
+  p{
+    margin-top: 25px;
+  }
 
 
 
