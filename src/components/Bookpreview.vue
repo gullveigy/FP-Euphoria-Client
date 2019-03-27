@@ -2,7 +2,7 @@
 	<div>
 		<h4>{{ msg }}</h4>
 		<div><img v-if="loading" src="../assets/loading.gif"></div>
-		<div id="viewerCanvas" style="width: 800px; height: 700px; margin-left: 350px; margin-top: 30px"></div>
+		<div id="viewerCanvas" style="width: 900px; height: 750px; margin-left:auto; margin-right:auto" ></div>
 	</div>
 </template>
 <script>
@@ -45,6 +45,11 @@ export default {
   h4 {
     margin-top: 40px;
     font-size: 37pt;
+  }
+
+  div {
+    margin-left: auto;
+    margin-right: auto;
   }
 
 </style>
