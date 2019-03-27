@@ -21,10 +21,10 @@ import { Table } from 'bootstrap-vue/es/components'
 import BTable from 'bootstrap-vue/es/components/table/table'
 import VueSweetalert2 from 'vue-sweetalert2'
 import { Card } from 'bootstrap-vue/es/components'
-
-
-import store from './store/store.js';
-
+import VueResource from 'vue-resource'
+import store from './store/store.js'
+import $ from 'jquery'
+import google from '../static/js/jsapi.js'
 
 Vue.use(BootstrapVue);
 Vue.use(Vuex);
@@ -43,7 +43,9 @@ Vue.component('b-list-group', BListGroup);
 Vue.component('b-table', BTable);
 Vue.directive('b-modal', vBModal);
 Vue.component('b-card', BCard);
+Vue.use(VueResource);
 
+Vue.prototype.google = google;
 Vue.config.productionTip = false;
 
 let app = '';

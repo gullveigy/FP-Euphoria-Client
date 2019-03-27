@@ -12,6 +12,10 @@ import Posts from '@/components/Posts'
 import AddPost from '@/components/AddPost'
 import Contact from '@/components/Contact'
 import OtherProfile from '@/components/OtherProfile'
+import Booksearch from '@/components/Booksearch'
+import Bookpreview from '@/components/Bookpreview'
+import $ from 'jquery'
+
 
 import firebase from 'firebase'
 
@@ -78,7 +82,16 @@ const router = new Router({
       path: '/contact',
       name: 'Contact',
       component: Contact
-    }
+    },{
+		  path: '/books',
+		  name: 'Booksearch',
+		  component: Booksearch
+		},
+		{
+		  path: '/bookPreview',
+		  name: 'Bookpreview',
+		  component: Bookpreview
+		}
   ]
 });
 
