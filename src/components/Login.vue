@@ -14,6 +14,7 @@
 <script>
 
   import firebase from 'firebase'
+  import userservice from '@/services/userservice'
 
   export default {
       name: "Login",
@@ -21,7 +22,9 @@
         return {
           email: '',
           password: '',
-          message: ''
+          message: '',
+          info: [],
+          usertype: ''
         }
       },
     created () {
@@ -31,8 +34,25 @@
       login: function () {
         firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(
           (user) => {
-            console.log(firebase.auth().currentUser.email);
-            this.$router.replace('userprofile')
+
+            userservice.fetchOneUser(this.email)
+              .then(response => {
+                if (response) {
+                  this.info = response.data;
+                  this.usertype = this.info[0].usertype;
+                  console.log(this.usertype);
+
+                  if (this.usertype !== 'admin') {
+                    console.log("Not an Admin");
+                    this.$router.replace('userprofile')
+                  } else{
+                    console.log("An Admin!");
+                    this.$router.replace('/')
+                  }
+
+                }
+              });
+
           },
           (err) => {
             alert('Oops. ' + err.message);

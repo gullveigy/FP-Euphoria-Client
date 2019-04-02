@@ -5,8 +5,7 @@
       <div class="row">
         <div class="col-xl-6 mx-auto text-center">
           <div class="section-title mb-100">
-            <p>get in touch</p>
-            <h4>contact me</h4>
+            <h4>Contact Us</h4>
           </div>
         </div>
       </div>
@@ -14,21 +13,16 @@
         <div class="col-md-8">
           <form action="#" class="contact-form">
             <div class="row">
-              <div class="col-xl-6">
-                <input type="text" placeholder="name">
-              </div>
-              <div class="col-xl-6">
-                <input type="text" placeholder="email">
-              </div>
-              <div class="col-xl-6">
-                <input type="text" placeholder="subject">
-              </div>
-              <div class="col-xl-6">
-                <input type="text" placeholder="telephone">
+
+              <div class="col-xl-12">
+                <input type="text" v-model="Ctitle" placeholder="title">
               </div>
               <div class="col-xl-12">
-                <textarea placeholder="message" cols="30" rows="10"></textarea>
-                <input type="button" value="send message">
+                <input type="text" v-model="Ctelephone" placeholder="telephone">
+              </div>
+              <div class="col-xl-12">
+                <textarea v-model="Cmessage" placeholder="message" cols="30" rows="10"></textarea>
+                <input type="button" value="send message" v-on:click="addcontact()">
               </div>
             </div>
           </form>
@@ -37,7 +31,7 @@
           <div class="single-contact">
             <i class="fa fa-map-marker"></i>
             <h5>Address</h5>
-            <p>661 Lefferts, NY 11203, USA</p>
+            <p>Lacken Wood, Waterford, Ireland</p>
           </div>
           <div class="single-contact">
             <i class="fa fa-phone"></i>
@@ -47,7 +41,7 @@
           <div class="single-contact">
             <i class="fa fa-envelope"></i>
             <h5>Email</h5>
-            <p>infor@personal.com</p>
+            <p>1804094745@qq.com</p>
           </div>
         </div>
       </div>
@@ -57,8 +51,85 @@
 </template>
 
 <script>
+
+  import firebase from 'firebase'
+  import userservice from '@/services/userservice'
+  import contactservice from '@/services/contactservice'
+
     export default {
-        name: "Contact"
+      name: "Contact",
+      data() {
+        return {
+          Ctelephone:'',
+          title: '',
+          Cmessage: '',
+          info:[],
+          useremail: '',
+          username: '',
+          Ctitle: ''
+        }
+      },
+      created() {
+        this.addcontact();
+      },
+      methods: {
+        addcontact: function () {
+
+          if (firebase.auth().currentUser) {
+            var useremail = firebase.auth().currentUser.email;
+            console.log(useremail);
+            userservice.fetchOneUser(useremail)
+              .then(response => {
+                if (response) {
+                  this.info = response.data;
+                  console.log(this.info);
+                }
+              });
+
+            var newcontact = {
+              username: this.info[0].username,
+              title: this.Ctitle,
+              phonenumber: this.Ctelephone,
+              content: this.Cmessage,
+              email: this.info[0].email,
+              date: ''
+            };
+            contactservice.addContact(newcontact);
+
+            this.$swal({
+              title: 'Send Message Successfully!',
+              text: 'Go Back to Home Page?',
+              type: 'success',
+              showCancelButton: true,
+              confirmButtonText: 'OK, Go',
+              cancelButtonText: 'No, thx',
+              showCloseButton: true
+              // showLoaderOnConfirm: true
+            }).then((result) => {
+              if (result.value === true) {
+                this.$router.replace('/')
+              } else this.$router.replace('/contact')
+            })
+
+          } else {
+            this.$swal({
+              title: 'You need to login first!',
+              text: 'You can\'t do this action',
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'OK, Go login',
+              cancelButtonText: 'No, thx',
+              showCloseButton: true
+              // showLoaderOnConfirm: true
+            }).then((result) => {
+              if (result.value === true) {
+                this.$router.replace('login')
+              } else this.$router.replace('/')
+            })
+          }
+        }
+
+      }
     }
 </script>
 
