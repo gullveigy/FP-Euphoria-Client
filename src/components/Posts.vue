@@ -31,7 +31,7 @@
 
               <div class="widget-area no-padding blank">
                 <div class="status-upload">
-                  <h2 class="page-header">Add Comments</h2>
+                  <h2 class="page-header" style="margin-left: 18px">Add Comments</h2>
                   <form>
                     <textarea v-model="commenttext" placeholder="Say Something ?" ></textarea>
                     <button type="button" class="btn btn-success green" @click="addDiscomment()" v-b-modal="'myModal'"><i class="fa fa-share"></i> Comment</button>

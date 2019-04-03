@@ -14,6 +14,7 @@ import Contact from '@/components/Contact'
 import OtherProfile from '@/components/OtherProfile'
 import Booksearch from '@/components/Booksearch'
 import Bookpreview from '@/components/Bookpreview'
+import ContactMessage from '@/components/ContactMessage'
 import $ from 'jquery'
 
 
@@ -82,7 +83,13 @@ const router = new Router({
       path: '/contact',
       name: 'Contact',
       component: Contact
-    },{
+    },
+    {
+      path: '/contactmessage',
+      name: 'ContactMessage',
+      component: ContactMessage
+    },
+    {
 		  path: '/books',
 		  name: 'Booksearch',
 		  component: Booksearch
