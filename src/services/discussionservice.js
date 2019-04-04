@@ -29,6 +29,10 @@ export default {
 
   upvoteforDiscussion (id) {
     return Api().put(`/discussions/${id}/vote`)
+  },
+
+  deleteDiscussion (id) {
+    return Api().delete(`/discussions/${id}`)
   }
 
 

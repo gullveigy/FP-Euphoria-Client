@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<h4>{{ msg }}</h4>
-		<div><img v-if="loading" src="../assets/loading.gif"></div>
+		<div><img v-if="loading" src="../assets/loading1.gif"></div>
 		<div id="viewerCanvas" style="width: 900px; height: 750px; margin-left:auto; margin-right:auto" ></div>
 	</div>
 </template>

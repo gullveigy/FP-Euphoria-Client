@@ -81,7 +81,7 @@
 
   </div>
 
-  <h6>Euphoria</h6>
+  <h6 style="margin-bottom: 0px;">Euphoria</h6>
 
 </div>
 

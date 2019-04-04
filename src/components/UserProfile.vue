@@ -22,8 +22,8 @@
           <div>?<span>Followers</span></div>
         </div>
         <div v-if="this.username !== 'YOU NEED TO LOGIN FIRST'">
-          <div>90<span>Postings</span></div>
-          <div>90<span>Following</span></div>
+          <div>{{this.discussions.length}}<span>Postings</span></div>
+          <div>{{this.booklistdirs.length}}<span>Booklists</span></div>
           <div>90<span>Followers</span></div>
         </div>
       </div>
@@ -43,8 +43,9 @@
                     <h4 class="mt-0 mb-1">{{discussion.title}}</h4>
                     <h6>{{discussion.date}}</h6>
                     <h6>
-                      <i class="fa  fa-heart"></i>
-                      <i class="fa fa-pencil"></i>
+                      <i class="fa  fa-heart">({{discussion.upvotes}})</i>
+                      <i class="fa fa-pencil" v-on:click="getDiscussionIDandContent(discussion._id)" style="cursor: pointer"></i>
+                      <i class="fa fa-trash" @click="deleteposting(discussion._id)" style="cursor: pointer"></i>
                     </h6>
 
                   </b-media>
@@ -90,6 +91,7 @@
                   <i class="fa  fa-heart" @click="upvotefor(booklistdir._id)"> ({{booklistdir.upvotes}})</i>
                   <i class="fa fa-comment"></i>
                   <i class="fa fa-pencil" @click="getlistID(booklistdir._id)"></i>
+                  <i class="fa fa-trash" @click="deletebooklist(booklistdir._id)"></i>
 
 
                 </b-media>
@@ -112,6 +114,7 @@
     </div>
 
 
+    <h6 style="color: black; font-size: 5pt; margin-bottom: 0px; margin-top: 15px; text-align: center">-----Euphoria-----</h6>
 
   </div>
 
@@ -155,6 +158,8 @@
           this.getlistID();
           this.upvotefor();
 
+
+
         },
         methods: {
 
@@ -182,6 +187,53 @@
                 console.log(this.discussions);
               })
           },
+
+          getDiscussionIDandContent: function (Did) {
+            console.log(Did);
+            if (Did) {
+              this.$router.push({
+                name: 'Posts',
+                params: {
+                  id: Did
+                }
+              })
+            }
+          },
+
+          deleteposting: function (id) {
+            this.$swal({
+              title: 'Are you totaly sure?',
+              text: 'You can\'t Undo this action',
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'OK Delete it',
+              cancelButtonText: 'Cancel',
+              showCloseButton: true
+              // showLoaderOnConfirm: true
+            }).then((result) => {
+              console.log('SWAL Result : ' + result.value);
+              if (result.value === true) {
+                discussionservice.deleteDiscussion(id)
+                  .then(response => {
+                    // JSON responses are automatically parsed.
+                    this.message = response.data;
+                    console.log(this.message);
+                    this.fetchUserDis();
+                    // Vue.nextTick(() => this.$refs.vuetable.refresh())
+                    this.$swal('Deleted', 'You successfully deleted this Posting ' + JSON.stringify(response.data, null, 5), 'success')
+                  })
+                  .catch(error => {
+                    this.$swal('ERROR', 'Something went wrong trying to Delete ' + error, 'error')
+                    this.errors.push(error);
+                    console.log(error)
+                  })
+              } else {
+                console.log('SWAL Else Result : ' + result.value);
+                this.$swal('Cancelled', 'Your Posting still Counts!', 'info')
+              }
+            })
+          },
+
           fetchUserBooklistdir: function ( ) {
             var useremail = firebase.auth().currentUser.email;
             booklistdirservice.fetchUserDir(useremail)
@@ -197,6 +249,40 @@
                console.log(response.data);
                this.fetchUserBooklistdir();
 
+            })
+          },
+
+          deletebooklist: function (id) {
+            this.$swal({
+              title: 'Are you totaly sure?',
+              text: 'You can\'t Undo this action',
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'OK Delete it',
+              cancelButtonText: 'Cancel',
+              showCloseButton: true
+              // showLoaderOnConfirm: true
+            }).then((result) => {
+              console.log('SWAL Result : ' + result.value);
+              if (result.value === true) {
+                booklistdirservice.deleteBooklistdir(id)
+                  .then(response => {
+                    // JSON responses are automatically parsed.
+                    this.message = response.data;
+                    console.log(this.message);
+                    this.fetchUserBooklistdir();
+                    // Vue.nextTick(() => this.$refs.vuetable.refresh())
+                    this.$swal('Deleted', 'You successfully deleted this Booklist ' + JSON.stringify(response.data, null, 5), 'success')
+                  })
+                  .catch(error => {
+                    this.$swal('ERROR', 'Something went wrong trying to Delete ' + error, 'error')
+                    this.errors.push(error);
+                    console.log(error)
+                  })
+              } else {
+                console.log('SWAL Else Result : ' + result.value);
+                this.$swal('Cancelled', 'Your Booklist still Counts!', 'info')
+              }
             })
           },
 
@@ -348,7 +434,7 @@
     font-size: 1.8em;
     color:white;
     font-weight:bold;
-    cursor:pointer;
+
   }
   #info div:first-child
   {

@@ -187,7 +187,7 @@
     margin-left: -25px;
   }
   .contact {
-    background-image: url("http://infinityflamesoft.com/html/abal-preview/assets/img/contact_back.jpg");
+    background-image: url("../assets/whale10.jpg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

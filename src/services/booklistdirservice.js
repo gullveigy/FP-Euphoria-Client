@@ -20,6 +20,10 @@ export default {
 
   upvoteforBookdir (id) {
     return Api().put(`/booklistdir/${id}/upvote`)
+  },
+
+  deleteBooklistdir (id) {
+    return Api().delete(`/booklistdir/${id}`)
   }
 }
 
