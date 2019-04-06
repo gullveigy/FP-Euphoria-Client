@@ -6,12 +6,16 @@ export default {
   },
 
   fetchOneByname(username) {
-    return Api().get(`/find//${username}/user`)
+    return Api().get(`/find/${username}/user`)
   },
 
   addUser(user) {
     return Api().post('/users', user,
       {headers: {'Content-type': 'application/json'}})
+  },
+
+  upvoteforAuthor (id) {
+    return Api().put(`/currentuser/${id}/follow`)
   }
 }
 

@@ -18,9 +18,14 @@
             by {{ item.volumeInfo.authors }}
           </li>
 
-          <li v-if="item.volumeInfo.publishedDate" class="search-result--published">
-            <span>Published </span> {{ item.volumeInfo.publishedDate }}
-          </li>
+
+          <b-button variant="outline-dark" style="width: 82.88px; margin-top: 10px; margin-bottom: 10px">Booklist</b-button>
+          <router-link  target="_blank"  :to="{name:'Bookpreview',path:'bookPreview', query:{bookId:list[index].id}}">
+          <b-button variant="outline-dark" style="margin-top: 10px; margin-bottom: 10px">Preview</b-button>
+          </router-link>
+          <b-button variant="outline-dark" style="width: 82.88px; margin-top: 10px; margin-bottom: 10px">Buy</b-button>
+
+
         </ul>
       </li>
     </ol>

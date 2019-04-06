@@ -38,7 +38,7 @@
                   </form>
 
                   <b-modal id="myModal">
-                    <p>You Have Comment Successfully! </p>
+                    <p>You Have Commented Successfully! </p>
                   </b-modal>
 
                 </div><!-- Status Upload  -->
@@ -64,6 +64,11 @@
 
       <div class="col-md-12">
         <h2 class="page-header">Comments</h2>
+
+        <div v-show="discomments.length===0">
+          <p style="font-size: 15px">No Comments Right Now! Waiting For You to Add ...</p>
+        </div>
+
         <section class="comment-list">
           <!-- First Comment -->
           <article class="row" v-for="(discomment, index) in discomments" :key="index">
@@ -90,6 +95,7 @@
     </div>
   </div>
   </div>
+
   </div>
 </template>
 
@@ -207,6 +213,7 @@
   #posts {
     background: url("../assets/whale4.jpg")repeat fixed;
     background-size: auto 100%;
+    height: 800px;
   }
 
   div {

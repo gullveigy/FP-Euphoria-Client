@@ -24,7 +24,7 @@
         <div v-if="this.username !== 'YOU NEED TO LOGIN FIRST'">
           <div>{{this.discussions.length}}<span>Postings</span></div>
           <div>{{this.booklistdirs.length}}<span>Booklists</span></div>
-          <div>90<span>Followers</span></div>
+          <div>{{this.followers}}<span>Followers</span></div>
         </div>
       </div>
 
@@ -146,7 +146,8 @@
             name: '',
             upvotes: '',
             signature: '',
-            booklistname: ''
+            booklistname: '',
+            followers: ''
 
 
           }
@@ -174,6 +175,7 @@
                   this.username = this.info[0].username;
                   this.email = this.info[0].email;
                   this.signature = this.info[0].signature;
+                  this.followers = this.info[0].followers;
                   console.log(this.username);
 
                 }

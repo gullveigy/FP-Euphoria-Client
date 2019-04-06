@@ -7,7 +7,7 @@
     <p class="title">Postings: (13)</p>
     <p class="title">Booklists: (9)</p>
     <p>Followers: (46)</p>
-    <p><a href="#/otherprofile" class="button" @click="getUseridandgo(this.discussion[0].username)">Profile</a></p>
+    <b-button variant="outline-success" style="width: 200px; margin-left: auto; margin-right: auto; margin-bottom: 15px" v-on:click="followAuthor()">Follow</b-button>
   </div>
 
 
@@ -18,7 +18,12 @@
 
 <script>
 
+  import Vue from 'vue'
+  import firebase from 'firebase'
   import discussionservice from '@/services/discussionservice'
+  import userservice from '@/services/userservice'
+  import BButton from 'bootstrap-vue/es/components/button/button'
+  Vue.component('b-button', BButton);
 
     export default {
       name: "ProfileCard",
@@ -32,13 +37,14 @@
           content: '',
           commenttext: '',
           useremail: '',
-          uname: ''
+          info: [],
+          uid: '',
+          authorid: ''
 
         }
       },
       created() {
         this.getDiscussionAuthor();
-        this.getUseridandgo();
       },
       methods: {
         getDiscussionAuthor: function () {
@@ -55,19 +61,67 @@
               }
             })
         },
-        getUseridandgo: function (Uname) {
-          console.log(Uname);
-          if (Uname) {
-            this.$router.push({
-              name: 'OtherProfile',
-              params: {
-                uname: Uname
-              }
+
+        followAuthor: function (){
+          if (firebase.auth().currentUser) {
+            discussionservice.fetchOneDiscussion(this.$route.params.id)
+              .then(response => {
+
+                if (response) {
+                  this.discussion = response.data;
+                  this.author = this.discussion[0].username;
+                  console.log(this.author);
+
+                  userservice.fetchOneByname(this.author)
+                    .then(response => {
+                      if (response) {
+                        console.log(this.author);
+                        this.info = response.data;
+
+                        userservice.upvoteforAuthor(this.info[0]._id)
+                           .then(response => {
+                             if (response) {
+                               console.log(response.data);
+                             }
+                           })
+                        }
+                  })
+                }
+
+              });
+            this.$swal({
+              title: 'Follow Successfully!',
+              text: 'Go Back to Personal Center to Check It?',
+              type: 'success',
+              showCancelButton: true,
+              confirmButtonText: 'OK, Go',
+              cancelButtonText: 'No, thx',
+              showCloseButton: true
+              // showLoaderOnConfirm: true
+            }).then((result) => {
+              if (result.value === true) {
+                this.$router.replace('/userprofile')
+              } else this.$router.replace('/postcontent')
+            })
+          }else {
+            this.$swal({
+              title: 'You need to login first!',
+              text: 'You can\'t do this action',
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'OK, Go login',
+              cancelButtonText: 'No, thx',
+              showCloseButton: true
+              // showLoaderOnConfirm: true
+            }).then((result) => {
+              if (result.value === true) {
+                this.$router.replace('login')
+              } else this.$router.replace('/')
             })
           }
+          },
 
         }
-      }
     }
 </script>
 
