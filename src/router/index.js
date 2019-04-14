@@ -15,6 +15,7 @@ import OtherProfile from '@/components/OtherProfile'
 import Booksearch from '@/components/Booksearch'
 import Bookpreview from '@/components/Bookpreview'
 import ContactMessage from '@/components/ContactMessage'
+import blog from '@/components/blog'
 import $ from 'jquery'
 
 
@@ -98,7 +99,12 @@ const router = new Router({
 		  path: '/bookPreview',
 		  name: 'Bookpreview',
 		  component: Bookpreview
-		}
+		},
+    {
+      path: '/blog',
+      name: 'blog',
+      component: blog
+    }
   ]
 });
 

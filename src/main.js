@@ -25,6 +25,11 @@ import VueResource from 'vue-resource'
 import store from './store/store.js'
 import $ from 'jquery'
 import google from '../static/js/jsapi.js'
+import htmlToPdf from '@/components/utils/htmlToPdf'
+import ElemntUI from 'element-ui'
+import '../node_modules/element-ui/lib/theme-chalk/index.css'
+import VueStripeCheckout from 'vue-stripe-checkout';
+
 
 Vue.use(BootstrapVue);
 Vue.use(Vuex);
@@ -44,6 +49,9 @@ Vue.component('b-table', BTable);
 Vue.directive('b-modal', vBModal);
 Vue.component('b-card', BCard);
 Vue.use(VueResource);
+Vue.use(htmlToPdf);
+Vue.use(ElemntUI);
+Vue.use(VueStripeCheckout,'pk_test_7UIov3vZINChavW7ZGbnIVku00KeVozVEd');
 
 Vue.prototype.google = google;
 Vue.config.productionTip = false;

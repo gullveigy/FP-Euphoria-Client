@@ -1,31 +1,22 @@
 <template>
   <div class="hero" style="background-image: url(https://cewe-photoworld.com/wp-content/uploads/2018/05/Edit1a.jpg)">
     <div class="hero__content">
-      <h1 style="width: 700px; text-align: left; color: black">Find the Same Soul</h1>
+      <h1 style="width: 700px; text-align: left">Find the Same Soul</h1>
       <a class="btn" href="#" style="width: 200px">Get Started</a>
     </div>
   </div>
+
 </template>
 
 <script>
 
-  import Footer from '@/components/Footer'
-
-export default {
-  name: 'HelloWorld',
-  data () {
-    return {
-      msg: 'Record Books & Find The Same Thing'
+    export default {
+        name: "blog"
     }
-  },
-  components: {
-    'dfooter': Footer
-  },
-}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 
   body {
     margin: 0;
@@ -74,4 +65,5 @@ export default {
     border-radius: 3px;
     font-size: 20px;
   }
+
 </style>

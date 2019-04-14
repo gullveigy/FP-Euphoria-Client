@@ -5,96 +5,97 @@
 
     <postsnavbar></postsnavbar>
 
-  <div id="posts">
-  <div class="container">
-    <div class="well">
-      <div class="row">
-
-
-        <div class="col-md-11">
-
-          <div class="">
-            <h1  class="hidden-xs hidden-sm"> {{this.title}}</h1>
-            <hr>
-            <p1> Publish Date:  {{this.date}}</p1><br>
-            <p1><strong> Published By:  {{this.author}}</strong></p1>
-            <hr>
-            <p class="text-justify">{{this.content}}</p></div>
-        </div>
-
-
-        <div class="container">
+    <div id="posts">
+      <div class="container">
+        <div class="well">
           <div class="row">
 
 
-            <div class="col-md-12">
+            <div class="col-md-11">
 
-              <div class="widget-area no-padding blank">
-                <div class="status-upload">
-                  <h2 class="page-header" style="margin-left: 18px">Add Comments</h2>
-                  <form>
-                    <textarea v-model="commenttext" placeholder="Say Something ?" ></textarea>
-                    <button type="button" class="btn btn-success green" @click="addDiscomment()" v-b-modal="'myModal'"><i class="fa fa-share"></i> Comment</button>
-                  </form>
-
-                  <b-modal id="myModal">
-                    <p>You Have Commented Successfully! </p>
-                  </b-modal>
-
-                </div><!-- Status Upload  -->
-              </div><!-- Widget Area -->
+              <div class="">
+                <h1  class="hidden-xs hidden-sm"> {{this.title}}</h1>
+                <hr>
+                <p1 style="font-weight: bold"> Publish Date:  {{this.date.substring(0,10)}}</p1><br>
+                <p1><strong> Published By:  {{this.author}}</strong></p1>
+                <hr>
+                <p class="detail-text" v-html="text">{{this.text}}</p>
+              </div>
             </div>
 
-          </div>
-        </div>
+
+            <div class="container">
+              <div class="row">
 
 
+                <div class="col-md-12">
 
+                  <div class="widget-area no-padding blank">
+                    <div class="status-upload">
+                      <h2 class="page-header" style="margin-left: 18px">Add Comments</h2>
+                      <form>
+                        <textarea v-model="commenttext" placeholder="Say Something ?" ></textarea>
+                        <button type="button" class="btn btn-success green" @click="addDiscomment()" v-b-modal="'myModal'"><i class="fa fa-share"></i> Comment</button>
+                      </form>
 
-      </div>
+                      <b-modal id="myModal">
+                        <p>You Have Commented Successfully! </p>
+                      </b-modal>
 
-    </div>
-  </div>
-
-
-  <div class="container">
-
-
-    <div class="row">
-
-      <div class="col-md-12">
-        <h2 class="page-header">Comments</h2>
-
-        <div v-show="discomments.length===0">
-          <p style="font-size: 15px">No Comments Right Now! Waiting For You to Add ...</p>
-        </div>
-
-        <section class="comment-list">
-          <!-- First Comment -->
-          <article class="row" v-for="(discomment, index) in discomments" :key="index">
-            <div class="col-md-9 col-sm-9">
-
-                <div class="panel-body">
-                  <header class="text-left">
-                    <div class="comment-user"><i class="fa fa-user"></i> {{discomment.username}}</div>
-                    <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> {{discomment.date}}</time>
-                  </header>
-                  <div class="comment-post">
-                    <p3>
-                      {{discomment.content}}
-                    </p3>
-                  </div>
-                  <p class="text-right"><a href="#" class="btn btn-default btn-sm"><i class="fa fa-reply"></i> reply</a></p>
+                    </div><!-- Status Upload  -->
+                  </div><!-- Widget Area -->
                 </div>
 
+              </div>
             </div>
-          </article>
 
-        </section>
+
+
+
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="container">
+
+
+        <div class="row">
+
+          <div class="col-md-12">
+            <h2 class="page-header">Comments</h2>
+
+            <div v-show="discomments.length===0">
+              <p style="font-size: 15px">No Comments Right Now! Waiting For You to Add ...</p>
+            </div>
+
+            <section class="comment-list">
+              <!-- First Comment -->
+              <article class="row" v-for="(discomment, index) in discomments" :key="index">
+                <div class="col-md-9 col-sm-9">
+
+                  <div class="panel-body">
+                    <header class="text-left">
+                      <div class="comment-user"><i class="fa fa-user"></i> {{discomment.username}}</div>
+                      <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> {{discomment.date.substring(0,10)}}</time>
+                    </header>
+                    <div class="comment-post">
+                      <p3>
+                        {{discomment.content}}
+                      </p3>
+                    </div>
+                    <p class="text-right"><a href="#" class="btn btn-default btn-sm"><i class="fa fa-reply"></i> reply</a></p>
+                  </div>
+
+                </div>
+              </article>
+
+            </section>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  </div>
 
   </div>
 </template>
@@ -108,117 +109,119 @@
   import discommentservice from '@/services/discommentservice'
   import userservice from '@/services/userservice'
 
-    export default {
-        name: "Forum",
-        data () {
-          return {
-            discussion: [],
-            discomments: [],
-            info:[],
-            title: '',
-            author: '',
-            date: '',
-            username:'',
-            content: '',
-            commenttext: '',
-            useremail: ''
-          }
-        },
-        created () {
-          this.getOneDiscussion();
-          this.getDiscomment();
-          this.addDiscomment();
-        },
-        components: {
-          'profilecard': ProfileCard,
-          'postsnavbar': PostsNavbar
-        },
-        methods: {
-          getOneDiscussion: function () {
-            discussionservice.fetchOneDiscussion(this.$route.params.id)
-              .then(response => {
+  export default {
+    name: "Forum",
+    data () {
+      return {
+        discussion: [],
+        discomments: [],
+        info:[],
+        title: '',
+        author: '',
+        date: '',
+        username:'',
+        content: '',
+        text: '',
+        commenttext: '',
+        useremail: ''
+      }
+    },
+    created () {
+      this.getOneDiscussion();
+      this.getDiscomment();
+      this.addDiscomment();
+    },
+    components: {
+      'profilecard': ProfileCard,
+      'postsnavbar': PostsNavbar
+    },
+    methods: {
+      getOneDiscussion: function () {
+        discussionservice.fetchOneDiscussion(this.$route.params.id)
+          .then(response => {
 
-                if (response) {
-                  this.discussion = response.data;
-                  this.title = this.discussion[0].title;
-                  this.date = this.discussion[0].date;
-                  this.author = this.discussion[0].username;
-                  this.content = this.discussion[0].content;
+            if (response) {
+              this.discussion = response.data;
+              this.title = this.discussion[0].title;
+              this.date = this.discussion[0].date;
+              this.author = this.discussion[0].username;
+              this.content = this.discussion[0].content;
+              this.text = this.discussion[0].content.replace(/\n/gm,"<br/>");
 
-                }
-              })
-          },
-          getDiscomment: function () {
-            discommentservice.fetchDiscommentsNow(this.$route.params.id)
-              .then(response => {
-                if (response) {
-                  this.discomments = response.data;
-                  console.log(this.discomments);
-                  console.log(this.downvotes)
-                }
-
-              })
-          },
-          addDiscomment: function () {
-            if (firebase.auth().currentUser) {
-
-              var useremail = firebase.auth().currentUser.email;
-              console.log(useremail);
-              userservice.fetchOneUser(useremail)
-                .then(response => {
-                  if (response) {
-                    this.info = response.data;
-                    console.log(this.info);
-                  }
-                });
-
-              var discomment = {
-                username: this.info[0].username,
-                discussionid: this.$route.params.id,
-                content: this.commenttext,
-                date: '',
-                upvotes: 0,
-                downvotes: 0
-              };
-              discommentservice.addOneDiscomment(discomment)
-                .then(response => {
-                  console.log(response.data);
-                  this.getDiscomment()
-                });
-
-            } else {
-              this.$swal({
-                title: 'You need to login first!',
-                text: 'You can\'t do this action',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'OK, Go login',
-                cancelButtonText: 'No, thx',
-                showCloseButton: true
-                // showLoaderOnConfirm: true
-              }).then((result) => {
-                if (result.value === true) {
-                  this.$router.replace('/login')
-                } else this.$router.replace('/')
-              })
+            }
+          })
+      },
+      getDiscomment: function () {
+        discommentservice.fetchDiscommentsNow(this.$route.params.id)
+          .then(response => {
+            if (response) {
+              this.discomments = response.data;
+              console.log(this.discomments);
+              console.log(this.downvotes)
             }
 
-          }
+          })
+      },
+      addDiscomment: function () {
+        if (firebase.auth().currentUser) {
+
+          var useremail = firebase.auth().currentUser.email;
+          console.log(useremail);
+          userservice.fetchOneUser(useremail)
+            .then(response => {
+              if (response) {
+                this.info = response.data;
+                console.log(this.info);
+              }
+            });
+
+          var discomment = {
+            username: this.info[0].username,
+            discussionid: this.$route.params.id,
+            content: this.commenttext,
+            date: '',
+            upvotes: 0,
+            downvotes: 0
+          };
+          discommentservice.addOneDiscomment(discomment)
+            .then(response => {
+              console.log(response.data);
+              this.getDiscomment()
+            });
+
+        } else {
+          this.$swal({
+            title: 'You need to login first!',
+            text: 'You can\'t do this action',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'OK, Go login',
+            cancelButtonText: 'No, thx',
+            showCloseButton: true
+            // showLoaderOnConfirm: true
+          }).then((result) => {
+            if (result.value === true) {
+              this.$router.replace('/login')
+            } else this.$router.replace('/')
+          })
         }
+
+      }
     }
+  }
 </script>
 
 <style scoped>
 
   #posts {
-    background: url("../assets/whale4.jpg")repeat fixed;
+
     background-size: auto 100%;
     height: 800px;
   }
 
   div {
     text-align: left;
-    background: #fff1d2;
+    background: #f0f8ff;
     color: black;
   }
 
@@ -244,7 +247,7 @@
     float: right;
   }
 
-   small {
+  small {
     float: right;
     font-size: 12pt;
     margin-top:15px;
@@ -554,3 +557,4 @@
     min-height: 460px;
   }
 </style>
+

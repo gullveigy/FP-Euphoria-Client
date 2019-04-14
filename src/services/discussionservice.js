@@ -2,7 +2,7 @@ import Api from '@/services/api'
 
 export default {
   fetchDiscussions () {
-    return Api().get('/alldiscussions')
+    return Api().get('/alldiscussions/sortbyvote')
   },
 
   fetchDiscussionsSortDate () {
@@ -29,6 +29,10 @@ export default {
 
   upvoteforDiscussion (id) {
     return Api().put(`/discussions/${id}/vote`)
+  },
+
+  collectDiscussion (id) {
+    return Api().put(`/discussions/${id}/collect`)
   },
 
   deleteDiscussion (id) {

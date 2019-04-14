@@ -8,7 +8,7 @@
         <b-navbar-nav>
           <b-nav-item to="/#"><i class="fa fa-home" style="padding: 5px"> Home</i></b-nav-item>
           <b-nav-item to="/books"><i class="fa fa-list" style="padding: 5px"> Books</i></b-nav-item>
-          <b-nav-item to="/douban"><i class="fa fa-money" style="padding: 5px"> DouBan</i></b-nav-item>
+          <b-nav-item to="/douban"><i class="fa fa-money" style="padding: 5px"> Forum</i></b-nav-item>
           <b-nav-item to="/map"><i class="fa fa-globe" style="padding: 5px"> Map</i></b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
@@ -38,7 +38,7 @@ export default {
   text-align: center;
   color: White;
   margin-top: 0px;
-  background: url("./assets/whale11.gif")repeat fixed;
+
   background-size: auto 100%;
 }
 </style>

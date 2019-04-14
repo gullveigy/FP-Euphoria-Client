@@ -102,12 +102,29 @@
 
           </b-tab>
 
-          <b-tab title="Followers">
-            <h5>This tab does not have the <code>no-body</code> prop set</h5>
-            Quis magna Lorem anim amet ipsum do mollit sit cillum voluptate ex nulla tempor. Laborum
-            consequat non elit enim exercitation cillum aliqua consequat id aliqua. Esse ex consectetur
-            mollit voluptate est in duis laboris ad sit ipsum anim Lorem. Incididunt veniam velit elit
-            elit veniam Lorem aliqua quis ullamco deserunt sit enim elit aliqua esse irure.
+          <b-tab title="Post Collection">
+
+            <div id = "CollectedPostings" v-for="(collected, index) in collecteddis" :key="index">
+
+              <div id = "Collectedmedia" >
+                <ul class="list-unstyled">
+                  <b-media tag="li">
+                    <b-img slot="aside" blank blank-color="#abc" width="64" alt="placeholder" />
+
+                    <h4 class="mt-0 mb-1" style="font-weight: bold">{{collected.title}}</h4>
+                    <h6 style="font-weight: bold">Collect Date: {{collected.date.substring(0,10)}}</h6>
+                    <h6>
+                      <i class="fa fa-eye" v-on:click="getDiscussionIDandContent(collected.discussionid)" style="cursor: pointer"></i>
+                      <i class="fa fa-trash" @click="deletecollected(collected._id)" style="cursor: pointer"></i>
+                    </h6>
+
+                  </b-media>
+
+
+                </ul>
+              </div>
+            </div>
+
           </b-tab>
         </b-tabs>
       </b-card>
@@ -127,6 +144,7 @@
   import userservice from '@/services/userservice'
   import discussionservice from '@/services/discussionservice'
   import booklistdirservice from '@/services/booklistdirservice'
+  import collecteddiscussionservice from '@/services/collecteddiscussionservice'
   import Subfooter from "./Subfooter";
 
 
@@ -135,36 +153,230 @@
         name: "UserPrefile",
       components: {Subfooter},
       data (){
-          return {
-            username: 'YOU NEED TO LOGIN FIRST',
-            useremail: '',
-            userdisemail:'',
-            content: '',
-            discussions: [],
-            booklistdirs: [],
-            info: [],
-            name: '',
-            upvotes: '',
-            signature: '',
-            booklistname: '',
-            followers: ''
+        return {
+          username: 'YOU NEED TO LOGIN FIRST',
+          useremail: '',
+          userdisemail:'',
+          content: '',
+          discussions: [],
+          booklistdirs: [],
+          collecteddis: [],
+          info: [],
+          name: '',
+          upvotes: '',
+          signature: '',
+          booklistname: '',
+          followers: '',
+          userid: ''
 
 
-          }
+        }
         },
         created (){
           this.showUserInfo();
           this.fetchUserDis();
           this.fetchUserBooklistdir();
+          this.fetchCollected();
           this.getlistID();
           this.upvotefor();
 
 
-
         },
-        methods: {
+      methods: {
 
-          showUserInfo: function () {
+        showUserInfo: function () {
+          var useremail = firebase.auth().currentUser.email;
+          console.log(useremail);
+          userservice.fetchOneUser(useremail)
+            .then(response => {
+
+              if (response) {
+                this.info = response.data;
+                this.username = this.info[0].username;
+                this.email = this.info[0].email;
+                this.signature = this.info[0].signature;
+                this.followers = this.info[0].followers;
+                this.userid = this.info[0]._id;
+                this.avatar = this.info[0].avatar;
+                console.log(this.userid);
+
+              }
+            })
+        },
+        fetchUserDis: function ( ) {
+          var useremail = firebase.auth().currentUser.email;
+          discussionservice.fetchUserDiscussion(useremail)
+            .then(response => {
+              this.discussions = response.data;
+              console.log(this.discussions);
+            })
+        },
+
+        getDiscussionIDandContent: function (Did) {
+          console.log(Did);
+          if (Did) {
+            this.$router.push({
+              name: 'Posts',
+              params: {
+                id: Did
+              }
+            })
+          }
+        },
+
+        deleteposting: function (id) {
+          this.$swal({
+            title: 'Are you totaly sure?',
+            text: 'You can\'t Undo this action',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'OK Delete it',
+            cancelButtonText: 'Cancel',
+            showCloseButton: true
+            // showLoaderOnConfirm: true
+          }).then((result) => {
+            console.log('SWAL Result : ' + result.value);
+            if (result.value === true) {
+              discussionservice.deleteDiscussion(id)
+                .then(response => {
+                  // JSON responses are automatically parsed.
+                  this.message = response.data;
+                  console.log(this.message);
+                  this.fetchUserDis();
+                  // Vue.nextTick(() => this.$refs.vuetable.refresh())
+                  this.$swal('Deleted', 'You successfully deleted this Posting ' + JSON.stringify(response.data, null, 5), 'success')
+                })
+                .catch(error => {
+                  this.$swal('ERROR', 'Something went wrong trying to Delete ' + error, 'error')
+                  this.errors.push(error);
+                  console.log(error)
+                })
+            } else {
+              console.log('SWAL Else Result : ' + result.value);
+              this.$swal('Cancelled', 'Your Posting still Counts!', 'info')
+            }
+          })
+        },
+
+        fetchUserBooklistdir: function ( ) {
+          var useremail = firebase.auth().currentUser.email;
+          booklistdirservice.fetchUserDir(useremail)
+            .then(response => {
+              this.booklistdirs = response.data;
+              console.log(this.booklistdirs)
+            })
+        },
+
+        fetchCollected: function() {
+          var useremail = firebase.auth().currentUser.email;
+          collecteddiscussionservice.fetchCollectedDiscussion(useremail)
+            .then(response => {
+              this.collecteddis = response.data;
+              console.log(this.collecteddis)
+            })
+        },
+
+        upvotefor: function (bid){
+          console.log(bid);
+          booklistdirservice.upvoteforBookdir(bid)
+            .then(response => {
+              console.log(response.data);
+              this.fetchUserBooklistdir();
+
+            })
+        },
+
+        deletebooklist: function (id) {
+          this.$swal({
+            title: 'Are you totaly sure?',
+            text: 'You can\'t Undo this action',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'OK Delete it',
+            cancelButtonText: 'Cancel',
+            showCloseButton: true
+            // showLoaderOnConfirm: true
+          }).then((result) => {
+            console.log('SWAL Result : ' + result.value);
+            if (result.value === true) {
+              booklistdirservice.deleteBooklistdir(id)
+                .then(response => {
+                  // JSON responses are automatically parsed.
+                  this.message = response.data;
+                  console.log(this.message);
+                  this.fetchUserBooklistdir();
+                  // Vue.nextTick(() => this.$refs.vuetable.refresh())
+                  this.$swal('Deleted', 'You successfully deleted this Booklist ' + JSON.stringify(response.data, null, 5), 'success')
+                })
+                .catch(error => {
+                  this.$swal('ERROR', 'Something went wrong trying to Delete ' + error, 'error')
+                  this.errors.push(error);
+                  console.log(error)
+                })
+            } else {
+              console.log('SWAL Else Result : ' + result.value);
+              this.$swal('Cancelled', 'Your Booklist still Counts!', 'info')
+            }
+          })
+        },
+
+        deletecollected: function(id){
+          this.$swal({
+            title: 'Are you totaly sure?',
+            text: 'You can\'t Undo this action',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'OK Delete it',
+            cancelButtonText: 'Cancel',
+            showCloseButton: true
+            // showLoaderOnConfirm: true
+          }).then((result) => {
+            console.log('SWAL Result : ' + result.value);
+            if (result.value === true) {
+              collecteddiscussionservice.deleteCollectedDiscussion(id)
+                .then(response => {
+                  // JSON responses are automatically parsed.
+                  this.message = response.data;
+                  console.log(this.message);
+                  this.fetchCollected();
+                  // Vue.nextTick(() => this.$refs.vuetable.refresh())
+                  this.$swal('Deleted', 'You successfully deleted this CollectedPost ' + JSON.stringify(response.data, null, 5), 'success')
+                })
+                .catch(error => {
+                  this.$swal('ERROR', 'Something went wrong trying to Delete ' + error, 'error');
+                  this.errors.push(error);
+                  console.log(error)
+                })
+            } else {
+              console.log('SWAL Else Result : ' + result.value);
+              this.$swal('Cancelled', 'Your Collected still Counts!', 'info')
+            }
+          })
+        },
+
+        clearName() {
+          this.booklistname  = '';
+        },
+
+        handleOk(evt) {
+          evt.preventDefault();
+          if (!this.booklistname) {
+            alert('Please enter booklist name')
+          } else {
+            this.handleSubmit()
+          }
+        },
+
+        handleSubmit() {
+          this.addBooklist();
+          this.clearName();
+          this.$nextTick(( ) => {
+            this.$refs.modal.hide()
+          })
+        },
+        addBooklist: function () {
+          if (firebase.auth().currentUser) {
+
             var useremail = firebase.auth().currentUser.email;
             console.log(useremail);
             userservice.fetchOneUser(useremail)
@@ -172,184 +384,49 @@
 
                 if (response) {
                   this.info = response.data;
-                  this.username = this.info[0].username;
-                  this.email = this.info[0].email;
-                  this.signature = this.info[0].signature;
-                  this.followers = this.info[0].followers;
-                  console.log(this.username);
+                  console.log(this.info);
 
                 }
-              })
-          },
-          fetchUserDis: function ( ) {
-            var useremail = firebase.auth().currentUser.email;
-            discussionservice.fetchUserDiscussion(useremail)
+              });
+
+            var newbooklist = {
+              booklistname: this.booklistname,
+              username: this.info[0].username,
+              email: this.info[0].email
+            };
+            booklistdirservice.addOneBooklist(newbooklist)
               .then(response => {
-                this.discussions = response.data;
-                console.log(this.discussions);
-              })
-          },
-
-          getDiscussionIDandContent: function (Did) {
-            console.log(Did);
-            if (Did) {
-              this.$router.push({
-                name: 'Posts',
-                params: {
-                  id: Did
-                }
-              })
-            }
-          },
-
-          deleteposting: function (id) {
-            this.$swal({
-              title: 'Are you totaly sure?',
-              text: 'You can\'t Undo this action',
-              type: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'OK Delete it',
-              cancelButtonText: 'Cancel',
-              showCloseButton: true
-              // showLoaderOnConfirm: true
-            }).then((result) => {
-              console.log('SWAL Result : ' + result.value);
-              if (result.value === true) {
-                discussionservice.deleteDiscussion(id)
-                  .then(response => {
-                    // JSON responses are automatically parsed.
-                    this.message = response.data;
-                    console.log(this.message);
-                    this.fetchUserDis();
-                    // Vue.nextTick(() => this.$refs.vuetable.refresh())
-                    this.$swal('Deleted', 'You successfully deleted this Posting ' + JSON.stringify(response.data, null, 5), 'success')
-                  })
-                  .catch(error => {
-                    this.$swal('ERROR', 'Something went wrong trying to Delete ' + error, 'error')
-                    this.errors.push(error);
-                    console.log(error)
-                  })
-              } else {
-                console.log('SWAL Else Result : ' + result.value);
-                this.$swal('Cancelled', 'Your Posting still Counts!', 'info')
-              }
-            })
-          },
-
-          fetchUserBooklistdir: function ( ) {
-            var useremail = firebase.auth().currentUser.email;
-            booklistdirservice.fetchUserDir(useremail)
-              .then(response => {
-                this.booklistdirs = response.data;
-                console.log(this.booklistdirs)
-              })
-          },
-          upvotefor: function (bid){
-            console.log(bid);
-            booklistdirservice.upvoteforBookdir(bid)
-             .then(response => {
-               console.log(response.data);
-               this.fetchUserBooklistdir();
-
-            })
-          },
-
-          deletebooklist: function (id) {
-            this.$swal({
-              title: 'Are you totaly sure?',
-              text: 'You can\'t Undo this action',
-              type: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'OK Delete it',
-              cancelButtonText: 'Cancel',
-              showCloseButton: true
-              // showLoaderOnConfirm: true
-            }).then((result) => {
-              console.log('SWAL Result : ' + result.value);
-              if (result.value === true) {
-                booklistdirservice.deleteBooklistdir(id)
-                  .then(response => {
-                    // JSON responses are automatically parsed.
-                    this.message = response.data;
-                    console.log(this.message);
-                    this.fetchUserBooklistdir();
-                    // Vue.nextTick(() => this.$refs.vuetable.refresh())
-                    this.$swal('Deleted', 'You successfully deleted this Booklist ' + JSON.stringify(response.data, null, 5), 'success')
-                  })
-                  .catch(error => {
-                    this.$swal('ERROR', 'Something went wrong trying to Delete ' + error, 'error')
-                    this.errors.push(error);
-                    console.log(error)
-                  })
-              } else {
-                console.log('SWAL Else Result : ' + result.value);
-                this.$swal('Cancelled', 'Your Booklist still Counts!', 'info')
-              }
-            })
-          },
-
-          clearName() {
-            this.booklistname  = '';
-          },
-
-          handleOk(evt) {
-            evt.preventDefault();
-            if (!this.booklistname) {
-              alert('Please enter booklist name')
-            } else {
-              this.handleSubmit()
-            }
-          },
-
-          handleSubmit() {
-            this.addBooklist();
-            this.clearName();
-            this.$nextTick(( ) => {
-              this.$refs.modal.hide()
-            })
-          },
-          addBooklist: function () {
-            if (firebase.auth().currentUser) {
-
-              var useremail = firebase.auth().currentUser.email;
-              console.log(useremail);
-              userservice.fetchOneUser(useremail)
-                .then(response => {
-
-                  if (response) {
-                    this.info = response.data;
-                    console.log(this.info);
-
-                  }
-                });
-
-              var newbooklist = {
-                booklistname: this.booklistname,
-                username: this.info[0].username,
-                email: this.info[0].email
-              };
-              booklistdirservice.addOneBooklist(newbooklist)
-                .then(response => {
-                  console.log(response.data);
-                  this.fetchUserBooklistdir();
-                });
-            }
-          },
-
-          getlistID: function(bid) {
-            console.log(bid);
-            if (bid) {
-              this.$router.push({
-                name: 'Booklist',
-                params: {
-                  id: bid
-                }
-              })
-            }
-
-
+                console.log(response.data);
+                this.fetchUserBooklistdir();
+              });
           }
+        },
+
+        getlistID: function(bid) {
+          console.log(bid);
+          if (bid) {
+            this.$router.push({
+              name: 'Booklist',
+              params: {
+                id: bid
+              }
+            })
+          }
+        },
+
+        ChangeAvatar: function(uid) {
+          console.log(uid);
+          if (uid) {
+            this.$router.push({
+              name: 'Avatar',
+              params: {
+                id: uid
+              }
+            })
+          }
+
         }
+      }
     }
 
 
@@ -470,6 +547,13 @@
     padding:10px 20px;
   }
 
+  #Collectedmedia div {
+    float:right;
+    color:#2a2c2d;
+    padding:10px 20px;
+  }
+
+
   #UserCardsProfile {
     width:900px;
     background:rgba(255,255,255,1.0);
@@ -545,6 +629,9 @@
     margin-top: 10px;
     float: left;
   }
+
+
+
 
 
 </style>

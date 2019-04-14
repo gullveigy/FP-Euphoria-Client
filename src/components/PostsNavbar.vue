@@ -3,6 +3,9 @@
   <div>
     <ul>
       <li><a>
+        <i class="fa fa-bookmark my-float" @click="Collect()">({{this.collectnumber}})</i>
+      </a></li>
+      <li><a>
         <i class="fa fa-thumbs-up my-float" v-on:click="Upvotefor()">({{this.upvotes}})</i>
       </a></li>
       <li><a>
@@ -14,48 +17,123 @@
 
 <script>
 
+  import firebase from 'firebase'
   import discussionservice from '@/services/discussionservice'
+  import collecteddiscussionservice from '@/services/collecteddiscussionservice'
 
-    export default {
-      name: "PostsNavbar",
-      data() {
-        return {
-          discussion: [],
-          upvotes: ''
-        }
+  export default {
+    name: "PostsNavbar",
+    data() {
+      return {
+        discussion: [],
+        upvotes: '',
+        collectnumber: ''
+      }
+    },
+    created() {
+      this.getOneDiscussion();
+      this.GobacktoTop();
+    },
+    methods: {
+      getOneDiscussion: function () {
+        discussionservice.fetchOneDiscussion(this.$route.params.id)
+          .then(response => {
+
+            if (response) {
+              this.discussion = response.data;
+              console.log(this.discussion);
+              this.upvotes = this.discussion[0].upvotes;
+              this.downvotes = this.discussion[0].downvotes;
+              this.collectnumber = this.discussion[0].collect;
+
+            }
+          })
       },
-      created() {
-        this.getOneDiscussion();
+      Upvotefor: function () {
+        discussionservice.upvoteforDiscussion(this.$route.params.id)
+          .then(response => {
+            console.log(response.data);
+            this.getOneDiscussion();
 
-        this.GobacktoTop();
+          })
       },
-      methods: {
-        getOneDiscussion: function () {
-          discussionservice.fetchOneDiscussion(this.$route.params.id)
-            .then(response => {
+      GobacktoTop: function () {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0
+      },
 
-              if (response) {
-                this.discussion = response.data;
-                this.upvotes = this.discussion[0].upvotes;
-                this.downvotes = this.discussion[0].downvotes;
+      Collect: function () {
+        discussionservice.collectDiscussion(this.$route.params.id)
+          .then(response => {
+            console.log(response.data);
+            this.getOneDiscussion();
 
-              }
-            })
-        },
-        Upvotefor: function () {
-          discussionservice.upvoteforDiscussion(this.$route.params.id)
-            .then(response => {
-              console.log(response.data);
-              this.getOneDiscussion();
+            if (firebase.auth().currentUser) {
+              var useremail = firebase.auth().currentUser.email;
 
-            })
-        },
-        GobacktoTop: function () {
-          document.body.scrollTop = 0;
-          document.documentElement.scrollTop = 0
-        }
+              discussionservice.fetchOneDiscussion(this.$route.params.id)
+                .then(response => {
+
+                  if (response) {
+                    this.discussion = response.data;
+                    console.log(this.discussion);
+                    this.upvotes = this.discussion[0].upvotes;
+                    this.downvotes = this.discussion[0].downvotes;
+                    this.collectnumber = this.discussion[0].collect;
+
+                    var newcollected = {
+                      collectemail: useremail,
+                      discussionid: this.$route.params.id,
+                      author: this.discussion[0].username,
+                      title: this.discussion[0].title,
+                      bookname: this.discussion[0].bookname,
+                      content: this.discussion[0].content,
+                      date: this.discussion[0].date,
+                      upvotes: this.discussion[0].upvotes,
+                      collect: this.discussion[0].collect
+
+                    };
+
+                    collecteddiscussionservice.addNewCollected(newcollected)
+
+                  }
+                });
+
+              this.$swal({
+                title: 'Collect Successfully!',
+                text: 'Go Back to Personal Center to Check It?',
+                type: 'success',
+                showCancelButton: true,
+                confirmButtonText: 'OK, Go',
+                cancelButtonText: 'No, thx',
+                showCloseButton: true
+                // showLoaderOnConfirm: true
+              }).then((result) => {
+                if (result.value === true) {
+                  this.$router.replace('/userprofile')
+                }
+              })
+
+            }else {
+              this.$swal({
+                title: 'You need to login first!',
+                text: 'You can\'t do this action',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'OK, Go login',
+                cancelButtonText: 'No, thx',
+                showCloseButton: true
+                // showLoaderOnConfirm: true
+              }).then((result) => {
+                if (result.value === true) {
+                  this.$router.replace('login')
+                } else this.$router.replace('/')
+              })
+            }
+          })
       }
     }
+  }
 </script>
 
 <style scoped>
@@ -86,7 +164,7 @@
   ul{
     position:fixed;
     right:70px;
-    top: 570px;
+    top: 500px;
     padding-bottom:1px;
     bottom:80px;
     z-index:100;
@@ -95,7 +173,7 @@
 
   ul li{
     list-style:none;
-    margin-bottom:10px;
+    margin-bottom:20px;
   }
 
   ul li a{

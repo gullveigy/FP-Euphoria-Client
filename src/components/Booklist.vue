@@ -13,16 +13,17 @@
     <div id = "listboard">
 
       <h3 class="vue-title"><i class="fa fa-list" style="padding: 3px"></i> {{this.messagetitle}}</h3>
-
-      <div id="app1">
-        <v-client-table :columns="columns" :data="booklists" :options="options">
-          <a slot="remove" slot-scope="props" class="fa fa-trash-o fa-2x" @click="deleteBook(props.row._id)"></a>
-        </v-client-table>
+      <div id="pdfDom">
+        <div id="app1">
+          <v-client-table :columns="columns" :data="booklists" :options="options">
+            <a slot="remove" slot-scope="props" class="fa fa-trash-o fa-2x" @click="deleteBook(props.row._id)"></a>
+          </v-client-table>
+        </div>
       </div>
-
       <div id = "addmodal">
         <b-button v-b-modal.modalPut>Add Comments</b-button>
         <b-button v-b-modal.modalPrevent>Add Books</b-button>
+        <b-button v-on:click="getPdf()">Export PDF</b-button>
         <b-modal
           id="modalPrevent"
           ref="modal"
