@@ -9,10 +9,10 @@
           <b-nav-item to="/#"><i class="fa fa-home" style="padding: 5px"> Home</i></b-nav-item>
           <b-nav-item to="/books"><i class="fa fa-list" style="padding: 5px"> Books</i></b-nav-item>
           <b-nav-item to="/douban"><i class="fa fa-money" style="padding: 5px"> Forum</i></b-nav-item>
-          <b-nav-item to="/map"><i class="fa fa-globe" style="padding: 5px"> Map</i></b-nav-item>
+          <b-nav-item to="/contact"><i class="fa fa-comment" style="padding: 5px"> Contact Us</i></b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item to="/contact"><i class="fa fa-comment" style="padding: 5px"> Contact Us</i></b-nav-item>
+          <b-nav-item to="/orderbag"><i class="fa fa-shopping-cart" style="padding: 5px">OrderBag</i></b-nav-item>
           <b-nav-item to="/userprofile"><i class="fa fa-info" style="padding: 5px"> Personal</i></b-nav-item>
           <b-nav-item to="/login"><i class="fa fa-sign-in" style="padding: 5px"> Login </i></b-nav-item>
           <b-nav-item><i class="fa fa-sign-out" style="padding: 5px" @click="Logout"> Logout </i></b-nav-item>
@@ -63,7 +63,7 @@ export default {
         }).then((result) => {
           if (result.value === true) {
             this.$router.replace('login')
-          } else this.$router.replace('/')
+          } else this.$router.replace('/userprofile')
         })
       }
 

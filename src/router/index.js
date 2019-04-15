@@ -16,6 +16,8 @@ import Booksearch from '@/components/Booksearch'
 import Bookpreview from '@/components/Bookpreview'
 import ContactMessage from '@/components/ContactMessage'
 import blog from '@/components/blog'
+import OrderManage from '@/components/OrderManage'
+import OrderBag from '@/components/OrderBag'
 import $ from 'jquery'
 
 
@@ -104,7 +106,18 @@ const router = new Router({
       path: '/blog',
       name: 'blog',
       component: blog
+    },
+    {
+      path: '/ordermanage',
+      name: 'OrderManage',
+      component: OrderManage
+    },
+    {
+      path: '/orderbag',
+      name: 'OrderBag',
+      component: OrderBag
     }
+
   ]
 });
 

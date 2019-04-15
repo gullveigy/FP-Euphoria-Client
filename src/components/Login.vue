@@ -82,7 +82,7 @@
                     this.$router.replace('userprofile')
                   } else{
                     console.log("An Admin!");
-                    this.$router.replace('/')
+                    this.$router.replace('/ordermanage')
                   }
 
                 }

@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <div id="userpage">
+
+    <h6 style="color: rgba(255,255,255,0)">---Euphoria---</h6>
+
     <div id="twitterwidget">
       <div id="userprofile">
 
@@ -9,7 +12,7 @@
         </div>
         <div v-else="this.username !== 'YOU NEED TO LOGIN FIRST'">
           <img class="avatar" src="../assets/whale5.jpg" alt="Ash" />
-          <h2>{{this.username}}<a>@{{this.email}}</a></h2>
+          <h2>Welcome! {{this.username}}<a>@{{this.email}}</a></h2>
         </div>
 
       </div>
@@ -131,7 +134,7 @@
     </div>
 
 
-    <h6 style="color: black; font-size: 5pt; margin-bottom: 0px; margin-top: 15px; text-align: center">-----Euphoria-----</h6>
+    <h6 style="color: rgba(255,255,255,0); font-size: 5pt; margin-bottom: 0px; margin-top: 15px; text-align: center">-----Euphoria-----</h6>
 
   </div>
 
@@ -443,6 +446,13 @@
   {
     background: #eaeced;
     font-family:arial;
+  }
+
+  #userpage {
+    background-image:url("https://hdwallsource.com/img/2014/9/blur-26347-27038-hd-wallpapers.jpg");
+    background-repeat:no-repeat;
+    background-size:cover;
+    padding:10px;
   }
 
   #twitterwidget
