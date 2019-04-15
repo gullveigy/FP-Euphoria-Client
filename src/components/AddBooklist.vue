@@ -1,0 +1,84 @@
+<template>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-10">
+        <div class="row">
+          <div class="col-sm-6">
+            <div>
+              <h5>You are buying:</h5>
+              <ul>
+                <li><img style="width: 127.99px; height: 170px; margin-top: 10px;" v-bind:src="book.imgUrl"></img></li>
+                <li>Book Title: <em>{{book.title}}</em></li>
+                <li>Author: <em>{{book.author}}</em></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <h5>Select Booklist:</h5>
+            <b-list-group v-for="(booklistdir, index) in booklistdirs" :key="index">
+              <b-list-group-item style="cursor: pointer" v-on:click="addBooks(booklistdir._id)">{{booklistdir.booklistname}}</b-list-group-item>
+            </b-list-group>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+
+  import Vue from 'vue'
+  import firebase from 'firebase'
+  import BListGroup from 'bootstrap-vue/es/components/list-group/list-group'
+  Vue.component('b-list-group', BListGroup);
+  import booklistdirservice from '@/services/booklistdirservice'
+  import booklistservice from '@/services/booklistservice'
+
+    export default {
+      props: [ 'book'],
+      name: "AddBooklist",
+      data () {
+        return {
+          booklistdirs: [],
+          booklistname: ''
+        }
+      },
+      created () {
+        this.getcurrentBooklist();
+      },
+      methods: {
+        getcurrentBooklist: function () {
+          var useremail = firebase.auth().currentUser.email;
+          booklistdirservice.fetchUserDir(useremail)
+            .then(response => {
+              this.booklistdirs = response.data;
+              console.log(this.booklistdirs)
+            })
+        },
+
+        addBooks: function (bid) {
+          if (firebase.auth().currentUser) {
+            var booklist = {
+              booklistid: bid,
+              bookname: this.book.title,
+              author: this.book.author,
+              username: 'Agust D',
+              date: ''
+            };
+            booklistservice.addOneBook(booklist)
+              .then(response => {
+                console.log(response.data);
+              });
+          }
+        }
+
+      }
+    }
+</script>
+
+<style scoped>
+
+</style>

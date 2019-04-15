@@ -1,7 +1,7 @@
 <template>
 	<div id="booksearch">
     <img src="../assets/booksearch.png" alt="description here" style="margin-top: 130px"/>
-		<h4 style="color: gainsboro; margin-top: 0px; margin-left: auto; margin-right: auto">{{ msg }}</h4>
+		<h4 style="color: darkslategray; margin-top: 0px; margin-left: auto; margin-right: auto">{{ msg }}</h4>
 		 <div id='search' class="form-inline" style="margin-top: 10px; margin-left: 620px">
 			 <input id='searchContent' type="text" class="form-control"/>&nbsp;
 		   <button type="button" class="btn btn-primary" v-on:click="getBooks()">search</button>
@@ -17,7 +17,7 @@
           <li v-if="item.volumeInfo.authors" class="search-result--authors">
             by {{ item.volumeInfo.authors }}
           </li>
-          <b-button variant="outline-dark" style="width: 82.88px; margin-top: 10px; margin-bottom: 10px">Booklist</b-button>
+          <b-button variant="outline-dark" style="width: 82.88px; margin-top: 10px; margin-bottom: 10px" @click="openBooklistDialog(index)">Booklist</b-button>
           <router-link  target="_blank"  :to="{name:'Bookpreview',path:'bookPreview', query:{bookId:list[index].id}}">
           <b-button variant="outline-dark" style="margin-top: 10px; margin-bottom: 10px">Preview</b-button>
           </router-link>
@@ -27,6 +27,9 @@
 			<el-dialog :visible.sync="dialogFormVisible"  id="pay-dialog" center>
 			  <payment ref="payment" :book='book'></payment>
 			</el-dialog>
+      <el-dialog :visible.sync="BdialogFormVisible"  id="booklist-dialog" center>
+        <AddBooklist ref="AddBooklist" :book='book'></AddBooklist>
+      </el-dialog>
     </ol>
     <h6 style="color: white; margin-top: 400px">---Euphoria---</h6>
 	</div>
@@ -35,17 +38,20 @@
 
 <script>
 import payment from '@/components/Payment.vue';
+import AddBooklist from '@/components/AddBooklist.vue';
 export default {
   name: 'Booksearch',
-	components: {payment},
+	components: {payment,AddBooklist},
   data () {
     return {
       msg: 'Search Books Here',
       dialogFormVisible: false,
+      BdialogFormVisible: false,
 			book:{
 				title:'',
 				price:'',
-				imgUrl:''
+				imgUrl:'',
+        author:''
 			},
 	    list:[]
     }
@@ -64,6 +70,21 @@ export default {
 			};
 		 this.dialogFormVisible = true;
 	 },
+
+   openBooklistDialog(index) {
+     var title = this.list[index].volumeInfo.title;
+     var imgUrl = 	this.list[index].volumeInfo.imageLinks.thumbnail;
+     var author = this.list[index].volumeInfo.authors;
+     var price =  "No for sale!";
+     if('FOR_SALE' == this.list[index].saleInfo.saleability){
+       price = this.list[index].saleInfo.listPrice.amount + ' ' +this.list[index].saleInfo.listPrice.currencyCode;
+     }
+     this.book = {title:title,
+       author:author,
+       imgUrl:imgUrl
+     };
+     this.BdialogFormVisible = true;
+   },
    getBooks(){
 	   var searchContent = $("#searchContent").val();
 	   if(searchContent == ''){
@@ -87,28 +108,6 @@ export default {
 
 <style>
 
-  #booksearch {
-    background-image: url("../assets/whale16.jpg");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    position: relative;
-    z-index: 2;
-    color: #fff;
-  }
-
-  #booksearch:before {
-    position: absolute;
-    content: "";
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    background-color: #333;
-    z-index: -1;
-    opacity: .85;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=85)";
-  }
 	.content{
 		margin :5px;
 	}
