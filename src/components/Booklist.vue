@@ -1,6 +1,6 @@
 <template>
-<div>
-  <div class="hero">
+<div id="booklistpage">
+  <div>
 
     <div class="backtotop">
       <ul>
@@ -82,7 +82,7 @@
 
   </div>
 
-  <h6 style="margin-bottom: 0px;">Euphoria</h6>
+  <h6 style="margin-bottom: 0px;">---Euphoria---</h6>
 
 </div>
 
@@ -359,6 +359,31 @@
 </script>
 
 <style scoped>
+
+  #booklistpage {
+    background-image: url("../assets/whale16.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    margin-top: 0px;
+  }
+
+  #booklistpage:before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: #333;
+    z-index: -1;
+    opacity: .85;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=85)";
+  }
+
   #app1 {
     width: 60%;
     margin: 0 auto;
@@ -379,11 +404,14 @@
     width: 1200px;
     background:rgba(225,225,230,0.93);
     border-radius:5px;
-    margin:100px auto 40px;
+    margin:0px auto 40px auto;
     overflow:auto;
     -webkit-box-shadow: 0 8px 40px -6px #a3a5a6;
     -moz-box-shadow: 0 8px 40px -6px #a3a5a6;
     box-shadow: 0 8px 40px -6px #a3a5a6;
+
+
+
   }
 
   #addmodal {

@@ -20,6 +20,10 @@
               <b-list-group-item style="cursor: pointer" v-on:click="addBooks(booklistdir._id)">{{booklistdir.booklistname}}</b-list-group-item>
             </b-list-group>
 
+            <div v-show="this.mark === false">
+              <p style="font-size: 15px">Add Book into Selected Booklist Successfully!</p>
+            </div>
+
           </div>
 
         </div>
@@ -43,7 +47,8 @@
       data () {
         return {
           booklistdirs: [],
-          booklistname: ''
+          booklistname: '',
+          mark: true
         }
       },
       created () {
@@ -51,12 +56,29 @@
       },
       methods: {
         getcurrentBooklist: function () {
-          var useremail = firebase.auth().currentUser.email;
-          booklistdirservice.fetchUserDir(useremail)
-            .then(response => {
-              this.booklistdirs = response.data;
-              console.log(this.booklistdirs)
+          if (firebase.auth().currentUser) {
+            var useremail = firebase.auth().currentUser.email;
+            booklistdirservice.fetchUserDir(useremail)
+              .then(response => {
+                this.booklistdirs = response.data;
+                console.log(this.booklistdirs)
+              })
+          }else {
+            this.$swal({
+              title: 'You need to login first!',
+              text: 'You can\'t do this action',
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'OK, Go login',
+              cancelButtonText: 'No, thx',
+              showCloseButton: true
+              // showLoaderOnConfirm: true
+            }).then((result) => {
+              if (result.value === true) {
+                this.$router.replace('login')
+              } else this.$router.replace('/')
             })
+          }
         },
 
         addBooks: function (bid) {
@@ -72,6 +94,24 @@
               .then(response => {
                 console.log(response.data);
               });
+
+            this.mark = false;
+
+          }else {
+            this.$swal({
+              title: 'You need to login first!',
+              text: 'You can\'t do this action',
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'OK, Go login',
+              cancelButtonText: 'No, thx',
+              showCloseButton: true
+              // showLoaderOnConfirm: true
+            }).then((result) => {
+              if (result.value === true) {
+                this.$router.replace('login')
+              } else this.$router.replace('/')
+            })
           }
         }
 
