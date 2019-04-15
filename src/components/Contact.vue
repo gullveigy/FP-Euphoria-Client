@@ -70,7 +70,7 @@
         }
       },
       created() {
-        this.addcontact();
+        
       },
       methods: {
         addcontact: function () {

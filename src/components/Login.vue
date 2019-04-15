@@ -1,14 +1,49 @@
 <template>
-  <div class="hero">
-    <h3 style="font-size: 30px">Join Us Here!</h3>
-    <br/>
-    <input type="text" v-model="email" placeholder="Email"><br>
-    <input type="password" v-model="password" placeholder="Password"><br>
-    <button class="login-button" @click="login">Login</button>
-    <br/>
-    <p>{{message}}</p>
-    <p style="font-size: 20px">You don't have an account ? You can <router-link to="/sign-up">create one</router-link></p>
+  <body id="LoginForm">
+  <div class="container">
+    <h1 class="form-heading" style="font-size: 30px; margin-top: 20px; margin-bottom: 40px">Welcome Back To Euphoria!</h1>
+    <div class="login-form">
+      <div class="main-div">
+        <div class="panel">
+          <h2 style="font-size: 25px">Login Here</h2>
+          <p>Please enter your email and password</p>
+        </div>
+        <form id="Login">
+
+          <div class="form-group">
+
+
+            <input type="email" v-model="email" class="form-control" id="inputEmail" placeholder="Email Address">
+
+          </div>
+
+          <div class="form-group">
+
+            <input type="password"  v-model="password" class="form-control" id="inputPassword" placeholder="Password">
+
+          </div>
+          <div class="signup">
+
+            <a href="#/sign-up">Create a New Account?</a>
+
+          </div>
+
+          <div class="forgot">
+
+            <a href="/#">Forgot password?</a>
+
+          </div>
+
+          <button type="submit" class="btn btn-primary" @click="login">Login</button>
+
+        </form>
+      </div>
+      <p class="botto-text">---Euphoria---</p>
+    </div>
   </div>
+
+
+  </body>
 </template>
 
 <script>
@@ -17,16 +52,16 @@
   import userservice from '@/services/userservice'
 
   export default {
-      name: "Login",
-      data () {
-        return {
-          email: '',
-          password: '',
-          message: '',
-          info: [],
-          usertype: ''
-        }
-      },
+    name: "Login",
+    data () {
+      return {
+        email: '',
+        password: '',
+        message: '',
+        info: [],
+        usertype: ''
+      }
+    },
     created () {
       this.checkLogin()
     },
@@ -70,39 +105,70 @@
 </script>
 
 <style scoped>  /* "scoped" attribute limit the CSS to this component only */
-.hero {
-  height: 100vh;
-  margin-top: 30px;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+body#LoginForm
+{ background-image:url("https://hdwallsource.com/img/2014/9/blur-26347-27038-hd-wallpapers.jpg");
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:cover;
+  height: 680px;
+  padding:10px;}
+
+.form-heading { color:#fff; font-size:23px;}
+.panel h2{ color:#444444; font-size:18px; margin:0 0 8px 0;}
+.panel p { color:#777777; font-size:14px; margin-bottom:30px; line-height:24px;}
+.login-form .form-control {
+  background: #f7f7f7 none repeat scroll 0 0;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  font-size: 14px;
+  height: 50px;
+  line-height: 50px;
 }
-input {
-  margin: 10px 0;
-  width: 20%;
-  padding: 15px;
-}
-.login-button {
-  width: 170px;
-  height: 40px;
-  border-width: 0px;
-  border-radius: 3px;
-  background: #1E90FF;
-  cursor: pointer;
-  outline: none;
-  color: white;
-  font-size: 17px;
-}
-.login-button:hover {
-  background: #5599FF;
+.main-div {
+  background: #ffffff none repeat scroll 0 0;
+  border-radius: 2px;
+  margin: 10px auto 30px;
+  max-width: 38%;
+  padding: 50px 70px 70px 71px;
 }
 
-p {
-  margin-top: 40px;
-  font-size: 13px;
+.login-form .form-group {
+  margin-bottom:10px;
 }
-p a {
+.login-form{ text-align:center;}
+.forgot a {
+  color: #777777;
+  font-size: 14px;
   text-decoration: underline;
-  cursor: pointer;
 }
+.login-form  .btn.btn-primary {
+  background: #f0ad4e none repeat scroll 0 0;
+  border-color: #f0ad4e;
+  color: #ffffff;
+  font-size: 14px;
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  padding: 0;
+}
+.forgot {
+  text-align: left;
+  margin-bottom:30px;
+}
+.signup {
+  text-align: left;
+  margin-bottom:5px;
+  margin-top: 25px;
+}
+.botto-text {
+  color: #ffffff;
+  font-size: 14px;
+  margin: auto;
+}
+.login-form .btn.btn-primary.reset {
+  background: #ff9900 none repeat scroll 0 0;
+}
+.back { text-align: left; margin-top:10px;}
+.back a {color: #444444; font-size: 13px;text-decoration: none;}
+
 </style>

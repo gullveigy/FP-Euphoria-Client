@@ -15,7 +15,7 @@
           <b-nav-item to="/contact"><i class="fa fa-comment" style="padding: 5px"> Contact Us</i></b-nav-item>
           <b-nav-item to="/userprofile"><i class="fa fa-info" style="padding: 5px"> Personal</i></b-nav-item>
           <b-nav-item to="/login"><i class="fa fa-sign-in" style="padding: 5px"> Login </i></b-nav-item>
-          <b-nav-item to="/logout"><i class="fa fa-sign-out" style="padding: 5px"> Logout </i></b-nav-item>
+          <b-nav-item><i class="fa fa-sign-out" style="padding: 5px" @click="Logout"> Logout </i></b-nav-item>
           <i class="fa fa-pied-piper-alt fa-1x" style="padding: 5px; color: white;"></i>
         </b-navbar-nav>
       </b-collapse>
@@ -25,8 +25,51 @@
 </template>
 
 <script>
+
+  import firebase from 'firebase'
+
 export default {
-  name: 'App'
+  name: 'App',
+  methods: {
+    Logout: function () {
+      if (firebase.auth().currentUser) {
+
+        this.$swal({
+          title: 'Log Out?',
+          text: 'Are You Sure to Leave?',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Log Out',
+          cancelButtonText: 'No, Wait',
+          showCloseButton: true
+          // showLoaderOnConfirm: true
+        }).then((result) => {
+          if (result.value === true) {
+            firebase.auth().signOut().then(() => {
+              this.$router.replace('login')
+            })
+          } else this.$router.replace('/')
+        })
+      }else {
+        this.$swal({
+          title: 'You need to login first!',
+          text: 'You can\'t do this action',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'OK, Go login',
+          cancelButtonText: 'No, thx',
+          showCloseButton: true
+          // showLoaderOnConfirm: true
+        }).then((result) => {
+          if (result.value === true) {
+            this.$router.replace('login')
+          } else this.$router.replace('/')
+        })
+      }
+
+
+    }
+  }
 }
 </script>
 
