@@ -7,9 +7,13 @@
 		   <button type="button" class="btn btn-primary" v-on:click="getBooks()">search</button>
 		 </div>
     <ol class="row" style="margin-left: 290px">
-      <li class="col-md-4" style="width:130px; background: rgba(225,225,230,0.9); border-radius:5px; color: black; margin-top: 20px; margin-right: 25px" v-for="(item, index) in list">
+      <li class="col-md-4" 
+        style="width:130px; background: rgba(225,225,230,0.9); border-radius:5px; color: black; margin-top: 20px; margin-right: 25px" 
+        v-for="(item, index) in list" 
+        :key="index"
+      >
         <router-link  target="_blank"  :to="{name:'Bookpreview',path:'bookPreview', query:{bookId:list[index].id}}">
-          <img style="width: 127.99px; height: 170px; margin-top: 10px;" v-bind:src="item.volumeInfo.imageLinks.thumbnail"></img>
+          <img style="width: 127.99px; height: 170px; margin-top: 10px;" v-if="item.volumeInfo.imageLinks" v-bind:src="item.volumeInfo.imageLinks.thumbnail">
         </router-link>
         <ul class="search-result--info">
           <li class="search-result--title" style="font-weight: bold">{{ item.volumeInfo.title }}</li>
@@ -17,7 +21,10 @@
           <li v-if="item.volumeInfo.authors" class="search-result--authors">
             by {{ item.volumeInfo.authors }}
           </li>
-          <b-button variant="outline-dark" style="width: 82.88px; margin-top: 10px; margin-bottom: 10px" @click="openBooklistDialog(index)">Booklist</b-button>
+          <b-button 
+            variant="outline-dark" 
+            style="width: 82.88px; margin-top: 10px; margin-bottom: 10px" 
+            @click="openBooklistDialog(index)">Booklist</b-button>
           <router-link  target="_blank"  :to="{name:'Bookpreview',path:'bookPreview', query:{bookId:list[index].id}}">
           <b-button variant="outline-dark" style="margin-top: 10px; margin-bottom: 10px">Preview</b-button>
           </router-link>
@@ -57,34 +64,38 @@ export default {
     }
   },
  methods:{
-	 openPayDialog(index){
-		 var title = this.list[index].volumeInfo.title;
-		 var imgUrl = 	this.list[index].volumeInfo.imageLinks.thumbnail;
-		 var price =  "No for sale!";
-		 if('FOR_SALE' == this.list[index].saleInfo.saleability){
-		 			 price = this.list[index].saleInfo.listPrice.amount + ' ' +this.list[index].saleInfo.listPrice.currencyCode;
-		 }
-		 this.book = {title:title,
-				price:price,
-				imgUrl:imgUrl
-			};
-		 this.dialogFormVisible = true;
-	 },
+    openPayDialog(index){
+      var title = this.list[index].volumeInfo.title;
+      var imgUrl = 	this.list[index].volumeInfo.imageLinks.thumbnail;
+      var price =  "No for sale!";
+      if('FOR_SALE' == this.list[index].saleInfo.saleability){
+            price = this.list[index].saleInfo.listPrice.amount + ' ' +this.list[index].saleInfo.listPrice.currencyCode;
+      }
+      this.book = {
+          title:title,
+          price:price,
+          imgUrl:imgUrl,
+          authors: this.list[index].volumeInfo.authors,
+      };
+      this.dialogFormVisible = true;
+    },
 
-   openBooklistDialog(index) {
-     var title = this.list[index].volumeInfo.title;
-     var imgUrl = 	this.list[index].volumeInfo.imageLinks.thumbnail;
-     var author = this.list[index].volumeInfo.authors;
-     var price =  "No for sale!";
-     if('FOR_SALE' == this.list[index].saleInfo.saleability){
-       price = this.list[index].saleInfo.listPrice.amount + ' ' +this.list[index].saleInfo.listPrice.currencyCode;
-     }
-     this.book = {title:title,
-       author:author,
-       imgUrl:imgUrl
-     };
-     this.BdialogFormVisible = true;
-   },
+    openBooklistDialog(index) {
+      var title = this.list[index].volumeInfo.title;
+      var imgUrl = 	this.list[index].volumeInfo.imageLinks.thumbnail;
+      var author = this.list[index].volumeInfo.authors;
+      var price =  "No for sale!";
+      if('FOR_SALE' == this.list[index].saleInfo.saleability){
+        price = this.list[index].saleInfo.listPrice.amount + ' ' +this.list[index].saleInfo.listPrice.currencyCode;
+      }
+      this.book = {
+        title:title,
+        author:author,
+        imgUrl:imgUrl,
+
+      };
+      this.BdialogFormVisible = true;
+    },
    getBooks(){
 	   var searchContent = $("#searchContent").val();
 	   if(searchContent == ''){
@@ -123,5 +134,9 @@ export default {
     margin-bottom: 0px;
     margin-top: 10px;
     color: black;
+  }
+
+  li {
+    list-style: none;
   }
 </style>

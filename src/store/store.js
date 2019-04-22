@@ -6,7 +6,8 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     reportId: null,
-    reportType: null
+    reportType: null,
+    userInfo: ''
   },
   mutations: {
     SET_ReportId (state, rid) {
@@ -14,6 +15,9 @@ const store = new Vuex.Store({
     },
     SET_ReportType (state, type) {
       state.reportType = type;
+    },
+    SET_USERINFO (state, user) {
+      state.userInfo = user
     }
   }
 });

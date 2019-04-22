@@ -58,10 +58,10 @@
 
 
     <div class="comment-body">
-    <h5>Comment For {{this.messagetitle}}</h5>
+    <h5 style="margin-top: 159px">Comment For {{this.messagetitle}}</h5>
 
     <div v-show="Bcomments.length===0">
-      <p style="font-size: 15px">No Comments Right Now! Waiting For You to Add ...</p>
+      <p style="font-size: 15px; margin-top: 30px">No Comments Right Now! Waiting For You to Add ...</p>
     </div>
 
     <div id="comment" v-for="(Bcomment, index) in Bcomments" :key="index">
@@ -82,7 +82,7 @@
 
   </div>
 
-  <h6 style="margin-bottom: 0px;">---Euphoria---</h6>
+  <h6 style="color: rgba(255,255,255,0); font-size: 5pt; margin-bottom: 0px; margin-top: 80px; text-align: center">-----Euphoria-----</h6>
 
 </div>
 

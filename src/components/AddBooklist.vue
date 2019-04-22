@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col-sm-6">
             <div>
-              <h5>You are buying:</h5>
+              <h5>Book Information:</h5>
               <ul>
                 <li><img style="width: 127.99px; height: 170px; margin-top: 10px;" v-bind:src="book.imgUrl"></img></li>
                 <li>Book Title: <em>{{book.title}}</em></li>
@@ -16,6 +16,11 @@
 
           <div class="col-sm-6">
             <h5>Select Booklist:</h5>
+
+            <div v-show="booklistdirs.length===0">
+              <p style="font-size: 18px; margin-top: 15px">You do not have a book list for the time being. Please go to the 'Personal' page first and create your own book lists.</p>
+            </div>
+
             <b-list-group v-for="(booklistdir, index) in booklistdirs" :key="index">
               <b-list-group-item style="cursor: pointer" v-on:click="addBooks(booklistdir._id)">{{booklistdir.booklistname}}</b-list-group-item>
             </b-list-group>

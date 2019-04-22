@@ -38,7 +38,9 @@
 
         </form>
       </div>
-      <p class="botto-text">---Euphoria---</p>
+      <h6
+        style="color: rgba(255,255,255,0); font-size: 5pt; margin-bottom: 0px; margin-top: 15px; text-align: center"
+      >-----Euphoria-----</h6>
     </div>
   </div>
 
@@ -47,7 +49,6 @@
 </template>
 
 <script>
-
   import firebase from 'firebase'
   import userservice from '@/services/userservice'
 
@@ -62,17 +63,23 @@
         usertype: ''
       }
     },
+
     created () {
       this.checkLogin()
     },
     methods: {
       login: function () {
+        let vm = this
+
         firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(
           (user) => {
 
             userservice.fetchOneUser(this.email)
               .then(response => {
                 if (response) {
+                  console.log( 'userinfo',response )
+                  vm.$store.commit("SET_USERINFO", response.data[0]);
+
                   this.info = response.data;
                   this.usertype = this.info[0].usertype;
                   console.log(this.usertype);
@@ -84,7 +91,6 @@
                     console.log("An Admin!");
                     this.$router.replace('/ordermanage')
                   }
-
                 }
               });
 

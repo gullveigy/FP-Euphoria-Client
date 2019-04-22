@@ -10,8 +10,8 @@ export default {
   },
 
 
-  fetchDiscussionsbyQuerySearch (content) {
-    return Api().get(`/fuzzysearch/${content}/discussions`)
+  fetchDiscussionsbyQuerySearch (bookname) {
+    return Api().get(`/fuzzysearch/${bookname}/discussions`)
   },
 
   fetchUserDiscussion (email) {

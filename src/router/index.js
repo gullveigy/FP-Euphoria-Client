@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import userservice from "@/services/userservice";
 
 import Home from '@/components/Home'
 import Login from '@/components/Login'
@@ -18,8 +19,8 @@ import ContactMessage from '@/components/ContactMessage'
 import blog from '@/components/blog'
 import OrderManage from '@/components/OrderManage'
 import OrderBag from '@/components/OrderBag'
+import Purchased from '@/components/Purchased'
 import $ from 'jquery'
-
 
 import firebase from 'firebase'
 
@@ -50,7 +51,7 @@ const router = new Router({
       meta: {
         requireAuth: true
       }
-      },
+    },
     {
       path: '/userprofile',
       name: 'UserProfile',
@@ -90,7 +91,11 @@ const router = new Router({
     {
       path: '/contactmessage',
       name: 'ContactMessage',
-      component: ContactMessage
+      component: ContactMessage,
+      meta: {
+        requireAuth: true,
+        requireAdmin: true
+      }
     },
     {
 		  path: '/books',
@@ -110,13 +115,28 @@ const router = new Router({
     {
       path: '/ordermanage',
       name: 'OrderManage',
-      component: OrderManage
+      component: OrderManage,
+      meta: {
+        requireAdmin: true
+      }
     },
     {
       path: '/orderbag',
       name: 'OrderBag',
-      component: OrderBag
-    }
+      component: OrderBag,
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/purchased',
+      name: 'purchased',
+      component: Purchased,
+      meta: {
+        requireAuth: true
+      }
+
+    },
 
   ]
 });
@@ -124,8 +144,22 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const currentUser = firebase.auth().currentUser
   const requireAuth = to.matched.some(record => record.meta.requireAuth)
-  if (requireAuth && !currentUser) next('login')
-  else next()
+  const requireAdmin = to.matched.some(record => record.meta.requireAdmin)
+  if (requireAuth && !currentUser) {
+    next('login')
+  } 
+
+  if( requireAdmin ) {
+    let useremail = firebase.auth().currentUser.email
+    userservice.fetchOneUser(useremail).then(response => {
+      if (response.data[0].usertype === 'admin') {
+        next('')
+      } else {
+        next('/')
+      }
+    });
+  }
+  next()
 })
 export default router
 

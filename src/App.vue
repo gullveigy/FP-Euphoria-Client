@@ -12,11 +12,22 @@
           <b-nav-item to="/contact"><i class="fa fa-comment" style="padding: 5px"> Contact Us</i></b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item to="/orderbag"><i class="fa fa-shopping-cart" style="padding: 5px">OrderBag</i></b-nav-item>
+          <b-nav-item to="/ordermanage"
+            v-if="userInfo && userInfo.usertype === 'admin'" 
+          >
+            <i class="fa fa-file-text" style="padding: 5px"> OrderManage</i>
+          </b-nav-item>
+          <b-nav-item to="/contactmessage"
+            v-if="userInfo && userInfo.usertype === 'admin'" 
+          >
+            <i class="fa fa-commenting" style="padding: 5px"> ContactMessage</i>
+          </b-nav-item>
+          <b-nav-item to="/purchased"><i class="fa fa-shopping-cart" style="padding: 5px"> Purchased</i></b-nav-item>
           <b-nav-item to="/userprofile"><i class="fa fa-info" style="padding: 5px"> Personal</i></b-nav-item>
           <b-nav-item to="/login"><i class="fa fa-sign-in" style="padding: 5px"> Login </i></b-nav-item>
           <b-nav-item><i class="fa fa-sign-out" style="padding: 5px" @click="Logout"> Logout </i></b-nav-item>
-          <i class="fa fa-pied-piper-alt fa-1x" style="padding: 5px; color: white;"></i>
+          <img v-if="userInfo && userInfo.avatar" class="avatar" :src="avatarBaseUrl + '/images/' + userInfo.avatar" alt="Ash">
+          <i v-else class="fa fa-pied-piper-alt fa-1x" style="padding: 5px; color: white;"></i>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -26,14 +37,40 @@
 
 <script>
 
-  import firebase from 'firebase'
+import firebase from 'firebase'
+import userservice from "@/services/userservice";
+import { baseUrl } from './components/utils/config.js'
 
 export default {
   name: 'App',
+  computed: {
+    userInfo() {
+      return this.$store.state.userInfo
+    },
+    avatarBaseUrl() {
+      return baseUrl
+    }
+  },
+  mounted() {
+    this.showUserInfo()
+  },
   methods: {
+
+    showUserInfo() {
+      if(firebase.auth().currentUser) {
+        let useremail = firebase.auth().currentUser.email;
+
+        userservice.fetchOneUser(useremail).then(response => {
+          if (response) {
+            this.$store.commit("SET_USERINFO", response.data[0]);
+          }
+        });
+      }
+
+    },
+
     Logout: function () {
       if (firebase.auth().currentUser) {
-
         this.$swal({
           title: 'Log Out?',
           text: 'Are You Sure to Leave?',
@@ -48,6 +85,8 @@ export default {
             firebase.auth().signOut().then(() => {
               this.$router.replace('login')
             })
+            this.$store.commit("SET_USERINFO", '');
+
           } else this.$router.replace('/')
         })
       }else {
@@ -83,5 +122,11 @@ export default {
   margin-top: 0px;
 
   background-size: auto 100%;
+}
+.avatar {
+  display: block;
+  margin-top: 5px;
+  width: 30px;
+  height: 30px;
 }
 </style>

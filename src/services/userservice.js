@@ -14,6 +14,10 @@ export default {
       {headers: {'Content-type': 'application/json'}})
   },
 
+  uploadUserAvatar(data) {
+    return Api().post('/uploadavatarurl', data, {headers: {'Content-type': 'multipart/form-data'}})
+  },
+
   upvoteforAuthor (id) {
     return Api().put(`/currentuser/${id}/follow`)
   }

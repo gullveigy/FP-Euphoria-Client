@@ -1,13 +1,12 @@
 <template>
-
+    
 </template>
-
 <script>
-    export default {
-        name: "OrderBag"
-    }
+export default {
+    
+}
 </script>
 
-<style scoped>
+<style scope>
 
 </style>

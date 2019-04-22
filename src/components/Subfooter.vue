@@ -18,9 +18,6 @@
 </template>
 
 <script>
-
-
-
     export default {
         name: "Subfooter",
         data (){

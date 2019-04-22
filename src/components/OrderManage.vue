@@ -1,13 +1,428 @@
-<template>
+<style scoped>
+.order-page {
+  color: #555;
+  padding: 30px;
+}
 
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pagination {
+  cursor: pointer;
+}
+
+.count-info input {
+  width: 120px;
+  margin-right: 10px;
+  border: 1px solid #eee;
+  height: 30px;
+  outline: none;
+}
+
+.target-page {
+  margin-right: 30px;
+}
+.target-page input {
+  width: 50px;
+  margin-right: 10px;
+  text-align: center;
+  outline: none;
+  height: 30px;
+  border: 1px solid #eee;
+
+}
+.pagination-item {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border: 1px solid #eee;
+  margin: 0 5px;
+  border-radius: 3px;
+}
+
+.pagination-item:hover {
+    background-color: #eee;
+}
+
+.order-table {
+  margin-top: 30px;
+  width: 100%;
+}
+
+.status-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.status-finish {
+  border: 1px solid rgb(90, 156, 248);
+  background-color: rgb(90, 156, 248);
+  color: #fff;
+  line-height: 16px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.detail-btn {
+  width: 80px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 5px;
+  color: #555;
+  cursor: pointer;
+  box-shadow: 2px 0 7px 2px #eee;
+  border: 1px solid #eee;
+  margin: 5px;
+}
+.detail-btn:hover {
+  box-shadow: 0px 0 3px 2px rgba(90, 156, 248, 0.5);
+  color: rgb(90, 156, 248);
+}
+
+.information {
+    position: relative;
+}
+
+.bookcover {
+    position: absolute;
+    right: 10px;
+    top: 0px;
+    border: 1px solid #eee;
+    width: 120px;
+}
+
+.information-item {
+  display: flex;
+  font-size: 16px;
+  margin: 10px auto;
+}
+
+.information-item div:nth-child(1) {
+  width: 140px;
+  text-align: left;
+  color: #333;
+  font-weight: bold;
+  font-size: 18px;
+}
+.information-item div:nth-child(2) {
+  width: 270px;
+  text-align: left;
+  border: 1px solid #eee;
+  padding: 5px 10px;
+}
+.book-cover {
+	border: 1px solid #eee;
+	display: block;
+	margin: 0 auto;
+}
+</style>
+
+<template>
+  <div class="order-page">
+
+    <div class="pagination flex-between">
+      <div class="count-info flex-between">
+        <input type="text" v-model="keyword" placeholder="select items">
+        <div>{{totalCount}} order found</div>
+      </div>
+      
+
+      <div class="flex-between">
+        <div class="target-page flex-between">
+          <input type="number" v-model="userInputPageNum" :placeholder="currentPage">
+          <div class='' @click="goPage">per page</div>
+        </div>
+        <div class="flex-between">
+          <div class="pagination-item" 
+              @click="goPage('pre')"
+          >
+              <i class="el-icon-arrow-left"></i>
+          </div>
+          <div class="pagination-item">{{currentPage}}</div>
+          <div>of {{totalPage}}</div>
+          <div class="pagination-item"
+              @click="goPage('next')"
+          >
+              <i class="el-icon-arrow-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-list">
+      <el-table 
+        v-loading="loading"
+        :header-cell-style="{background:'rgb(80,74,68)',color:'#fff'}"
+        element-loading-text="loading"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.6)"
+        class="order-table" 
+        stripe :data="orderList" 
+    :default-sort="{prop: 'createtime', order: 'descending'}"
+        border>
+        <el-table-column prop="status" 
+    label="" 
+    width="70" 
+    :render-header="renderHeader"
+    fixed="left">
+          <template slot-scope="scope">
+            <div class="status-box status-finish" 
+              @click="upDateStatus(scope.$index, 0)"
+              v-if="scope.row.status == 1">
+              <i class="el-icon-check"></i>
+            </div>
+            <div class="status-box" 
+              @click="upDateStatus(scope.$index, 1)"
+              v-else></div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="orderid" label="Order Id" width="160"></el-table-column>
+        <el-table-column prop="status" label="Status" width="120">
+          <template slot-scope="scope">
+                <div>{{scope.row.status == '1' ? "Processed" : "Untreated"}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="bookname" label="Book Name" width="160"></el-table-column>
+        <el-table-column prop="bookcover" label="Bookcover" width="100">
+          <template slot-scope="scope">
+            <img :src="scope.row.bookcover" class="book-cover" min-width="70" height="70">
+          </template>
+        </el-table-column>
+        <el-table-column prop="authors" label="Authors" width="120"></el-table-column>
+        <el-table-column prop="price" label="Price" width="120"></el-table-column>
+        <el-table-column prop="createtime" resizable label="Modiffied" width="120"></el-table-column>
+        <el-table-column prop="username" label="Name of buyer" width="160"></el-table-column>
+        <el-table-column prop="address" label="Buyer address" width="200"></el-table-column>
+        <el-table-column prop="email" label="Buyer e-mail" width="140"></el-table-column>
+        <el-table-column prop="phone" label="Phone" width="120"></el-table-column>
+        <el-table-column label="Action" width="120" fixed='right'>
+          <template slot-scope="scope">
+            <div
+              class="detail-btn"
+              @click="deleteRow(scope.$index, orderList)"
+              type="params"
+              size="small"
+            >Detail</div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <el-dialog 
+      title="ORDER INFORMATION" 
+      :visible.sync="dialogVisible" 
+      width="600px">
+      <div class="information">
+        <div class="information-item">
+          <div>Order id:</div>
+          <div>{{currentOrder.orderid}}</div>
+        </div>
+        <div class="information-item">
+          <div>Book name:</div>
+          <div>{{currentOrder.bookname}}</div>
+        </div>
+        <div class="information-item">
+          <div>Authors:</div>
+		  <div>
+			<span v-for="(item, index) of currentOrder.authors" :key="index">{{item}}</span>
+		  </div>
+        </div>
+        <div class="information-item">
+          <div>Price:</div>
+          <div>{{currentOrder.price}}</div>
+        </div>
+        <div class="information-item">
+          <div>Time:</div>
+          <div>{{currentOrder.createtime}}</div>
+        </div>
+        <div class="information-item">
+          <div>Name of buyer:</div>
+          <div>{{currentOrder.username}}</div>
+        </div>
+        <div class="information-item">
+          <div>Buyer address:</div>
+          <div>{{currentOrder.address}}</div>
+        </div>
+        <div class="information-item">
+          <div>Buyer e-mail:</div>
+          <div>{{currentOrder.email}}</div>
+        </div>
+        <div class="information-item">
+          <div>Phone:</div>
+          <div>{{currentOrder.phone}}</div>
+        </div>
+        <img class="bookcover" :src="currentOrder.bookcover" alt="">
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">Determine</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: "OrderManage"
-    }
+import orderservice from "@/services/orderservice";
+import firebase from "firebase";
+import userservice from "@/services/userservice";
+import { close } from 'fs';
+
+export default {
+  name: "OrderManage",
+  data() {
+    return {
+      orderList: [],
+      currentPage: 1,
+      pageSize: 10,
+      totalCount: 0,
+      totalPage: 0,
+      currentOrder: "",
+      dialogVisible: false,
+      userInputPageNum: '',
+      loading: false,
+	  currentUserInfo: '',
+	  keyword: ''
+    };
+  },
+  watch: {
+    totalCount(val) {
+      this.totalPage = Math.ceil(val / this.pageSize);
+	},
+	keyword(val) {
+		this.fuzzySearch(val)
+		if(val = '') {
+			this.getOrderList()
+		}
+	}
+  },
+  mounted() {
+    this.getUserInfo();
+  },
+  methods: {
+
+    getUserInfo() {
+        let vm = this
+        if( !firebase.auth().currentUser ) {
+            this.$message("YOU NEED TO LOGIN FIRST")
+            return 
+        }
+        let useremail = firebase.auth().currentUser.email;
+        userservice.fetchOneUser(useremail).then(response => {
+        if (response) {
+            this.currentUserInfo = response.data[0]
+            vm.getOrderList()
+        }
+      });
+    },
+
+    goPage(page) {
+        if(page == 'pre') {
+            if(this.currentPage <= 1) {
+                this.$message("It's page one.");
+                return
+            } else {
+				this.currentPage = this.currentPage - 1
+				if( this.keyword.length > 0 ) {
+					this.fuzzySearch()
+				} else {
+					this.getOrderList()
+				}
+            }
+        } else if(page == 'next') {
+            if(this.currentPage >= this.totalPage) {
+                this.$message("It's the last page.");
+                return
+            } else {
+                this.currentPage = this.currentPage + 1
+				if( this.keyword.length > 0 ) {
+					this.fuzzySearch()
+				} else {
+					this.getOrderList()
+				}
+            }
+        } else {
+            if(1 <= this.userInputPageNum && this.userInputPageNum <= this.totalPage) {
+                this.currentPage = this.userInputPageNum
+				if( this.keyword.length > 0 ) {
+					this.fuzzySearch()
+				} else {
+					this.getOrderList()
+				}
+				this.userInputPageNum = ''
+            } else {
+				alert('Invalid page number')
+			}
+        }
+    },
+    
+    deleteRow(index, rows) {
+      this.currentOrder = rows[index];
+      this.dialogVisible = true;
+    },
+
+    upDateStatus(index, status) {
+      let data = {
+          order_id: this.orderList[index]._id,
+          status: status
+      }
+
+      orderservice.setOrderStatus(data).then(res => {
+        console.log( res )
+      })
+      this.$set(this.orderList[index], 'status', status)
+    },
+
+    getOrderList() {
+        this.loading = true
+ 
+        orderservice.orderList(this.pageSize, this.currentPage).then(res => {
+            if (res.data.data) {
+                this.orderList = res.data.data;
+                this.totalCount = res.data.totalCount;
+            }
+            this.loading = false
+        })
+        .catch( () => {
+            this.loading = false
+        })
+	},
+	
+	fuzzySearch(keyword) {
+		this.loading = true
+
+		orderservice.ordersearch(this.pageSize, 1, keyword).then( res => {
+            if (res.data.data) {
+                this.orderList = res.data.data;
+                this.totalCount = res.data.totalCount;
+            }
+            this.loading = false
+		})
+		.catch( () => {
+            this.loading = false
+        })
+	},
+
+	renderHeader (h,{column}) { 
+		return h(
+		'div',
+		[ 
+		h('span', column.label),
+		h('i', {
+			class:'el-icon-caret-bottom',
+			style:'color:#fff;margin-left:5px;'
+		})
+		],
+	);
+	}
+  }
+};
 </script>
 
-<style scoped>
-
-</style>

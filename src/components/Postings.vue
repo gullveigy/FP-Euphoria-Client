@@ -1,83 +1,83 @@
 <template>
   <div>
-  <div id="postings-page">
-  <div class="page-header">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="page-caption" style="height: 300px">
+    <div id="postings-page">
+      <div class="page-header">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="page-caption" style="height: 300px">
 
 
-              <div id='search' class="form-inline">
-                <b-button variant="light" style="height: 37.99px; width: 118px; left: 5%; position: absolute"><a href="#/addpost">Write Post</a></b-button>
-                <input id='searchContent' v-model="search" type="text" placeholder="Search Content" class="form-control"  style="left: 70%; position: absolute"/>&nbsp;
-                <b-button variant="secondary" v-on:click="searchpost()" style="position: absolute; left: 90%">search</b-button>
+                <div id='search' class="form-inline">
+                  <b-button variant="light" style="height: 37.99px; width: 118px; left: 5%; position: absolute"><a href="#/addpost">Write Post</a></b-button>
+                  <input id='searchContent' v-model="search" type="text" placeholder="Enter Bookname" class="form-control"  style="left: 70%; position: absolute"/>&nbsp;
+                  <b-button variant="secondary" v-on:click="searchpost()" style="position: absolute; left: 90%">search</b-button>
+                </div>
+
+
+
+
               </div>
-
-
-
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- /.page-header-->
-
-
-
-
-
-
-
-  <!-- news -->
-
-  <div class="card-section">
-    <div class="container">
-
-      <div class="row" v-if="this.search === ''">
-        <div class="col-md-4" v-for="(Discussion, index) in Discussions" :key="index">
-          <div class="card-content" style="height: 480px; border-radius:5px;">
-            <div class="card-img" style="border-radius:5px">
-              <img src="https://placeimg.com/380/230/nature" alt="">
-            </div>
-            <div class="card-desc" style="text-align: left">
-              <h4 style="text-align: left; font-weight: bold">{{Discussion.title}}</h4>
-              <p style="font-size: 10px; color: black; text-align: left">{{Discussion.username}}, {{Discussion.date.substring(0,10)}}</p>
-              <p style="font-size: 10px; color: black; text-align: left">{{Discussion.content.substring(0,100)}}...</p>
-              <i class="fa fa-fire" style="color: black; margin-right: 25px">({{Discussion.upvotes}})</i>
-              <i class="fa fa-bookmark" style="color: black">({{Discussion.collect}})</i>
-              <b-button variant="outline-info" v-on:click="getDiscussionIDandContent(Discussion._id)" style="margin-right: 270px; width: 78px; margin-top: 10px">Read</b-button>
-            </div>
-          </div>
-        </div>
-    </div>
-
-      <div class="row" v-else="this.search !== ''">
-        <div class="col-md-4" v-for="(newDiscussion, index) in newDiscussions" :key="index">
-          <div class="card-content" style="height: 480px; border-radius:5px;">
-            <div class="card-img">
-              <img src="https://placeimg.com/380/230/nature" alt="">
-            </div>
-            <div class="card-desc" style="text-align: left">
-              <h4 style="text-align: left; font-weight: bold">{{newDiscussion.title}}</h4>
-              <p style="font-size: 10px; color: black; text-align: left">{{newDiscussion.username}}, {{newDiscussion.date.substring(0,10)}}</p>
-              <p style="font-size: 10px; color: black; text-align: left">{{newDiscussion.content.substring(0,100)}}...</p>
-              <i class="fa fa-fire" style="color: black; margin-right: 25px">({{newDiscussion.upvotes}})</i>
-              <i class="fa fa-bookmark" style="color: black">({{newDiscussion.collect}})</i>
-              <b-button variant="outline-info" v-on:click="getDiscussionIDandContent(newDiscussion._id)" style="margin-right: 270px; width: 78px; margin-top: 10px">Read</b-button>
             </div>
           </div>
         </div>
       </div>
-
-  </div>
-  </div>
+      <!-- /.page-header-->
 
 
 
 
-  </div>
+
+
+
+      <!-- news -->
+
+      <div class="card-section">
+        <div class="container">
+
+          <div class="row" v-if="this.search === ''">
+            <div class="col-md-4" v-for="(Discussion, index) in Discussions" :key="index">
+              <div class="card-content" style="height: 500px; border-radius:5px;">
+
+                <img v-if="Discussion.file" :src="Discussion.file" alt="" style="width: 350px; height: 240px">
+
+                <div class="card-desc" style="text-align: left">
+                  <h4 style="text-align: left; font-weight: bold">{{Discussion.title}}</h4>
+                  <p style="font-size: 10px; color: black; text-align: left">{{Discussion.username}}, {{Discussion.date.substring(0,10)}}</p>
+                  <p style="font-size: 10px; color: black; text-align: left">{{Discussion.content.substring(0,100)}}...</p>
+                  <i class="fa fa-fire" style="color: black; margin-right: 25px">({{Discussion.upvotes}})</i>
+                  <i class="fa fa-bookmark" style="color: black">({{Discussion.collect}})</i>
+                  <b-button variant="outline-info" v-on:click="getDiscussionIDandContent(Discussion._id)" style="margin-right: 270px; width: 78px; margin-top: 10px">Read</b-button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" v-else="this.search !== ''">
+            <div class="col-md-4" v-for="(newDiscussion, index) in newDiscussions" :key="index">
+              <div class="card-content" style="height: 500px; border-radius:5px;">
+
+                <img v-if="newDiscussion.file" :src="newDiscussion.file" alt="" style="width: 350px; height: 240px">
+
+                <div class="card-desc" style="text-align: left">
+                  <h4 style="text-align: left; font-weight: bold">{{newDiscussion.title}}</h4>
+                  <p style="font-size: 10px; color: black; text-align: left">{{newDiscussion.username}}, {{newDiscussion.date.substring(0,10)}}</p>
+                  <p style="font-size: 10px; color: black; text-align: left">{{newDiscussion.content.substring(0,100)}}...</p>
+                  <i class="fa fa-fire" style="color: black; margin-right: 25px">({{newDiscussion.upvotes}})</i>
+                  <i class="fa fa-bookmark" style="color: black">({{newDiscussion.collect}})</i>
+                  <b-button variant="outline-info" v-on:click="getDiscussionIDandContent(newDiscussion._id)" style="margin-right: 270px; width: 78px; margin-top: 10px">Read</b-button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+    </div>
 
   </div>
 </template>
@@ -92,61 +92,62 @@
 
 
 
-    export default {
-        name: "Postings",
-        data (){
-          return {
-              Discussions: [],
-              newDiscussions:[],
-              title: '',
-              author: '',
-              date: '',
-              id: '',
-              search: ''
-          }
-        },
-        created (){
-          this.getDiscussions();
-          this.getDiscussionIDandContent();
-          this.searchpost();
+  export default {
+    name: "Postings",
+    data (){
+      return {
+        Discussions: [],
+        newDiscussions:[],
+        title: '',
+        author: '',
+        date: '',
+        id: '',
+        search: ''
+      }
+    },
+    created (){
+      this.getDiscussions();
+      this.getDiscussionIDandContent();
+      this.searchpost();
 
-        },
-        methods: {
-          getDiscussions: function () {
-            discussionservice.fetchDiscussions()
-              .then(response => {
+    },
+    methods: {
+      getDiscussions: function () {
+        discussionservice.fetchDiscussions()
+          .then(response => {
 
-                if (response) {
-                  this.Discussions = response.data;
-                  console.log(this.Discussions)
-                }
-              })
-          },
-          searchpost: function () {
-            discussionservice.fetchDiscussionsbyQuerySearch(this.search)
-              .then(response => {
+            if (response) {
+              this.Discussions = response.data;
+              console.log(this.Discussions);
 
-                if (response) {
-                  this.newDiscussions = response.data;
-                  console.log(this.newDiscussions);
-
-                }
-              })
-          },
-
-          getDiscussionIDandContent: function (Did) {
-            console.log(Did);
-            if (Did) {
-              this.$router.push({
-                name: 'Posts',
-                params: {
-                  id: Did
-                }
-              })
             }
-          }
+          })
+      },
+      searchpost: function () {
+        discussionservice.fetchDiscussionsbyQuerySearch(this.search)
+          .then(response => {
+
+            if (response) {
+              this.newDiscussions = response.data;
+              console.log(this.newDiscussions);
+
+            }
+          })
+      },
+
+      getDiscussionIDandContent: function (Did) {
+        console.log(Did);
+        if (Did) {
+          this.$router.push({
+            name: 'Posts',
+            params: {
+              id: Did
+            }
+          })
         }
+      }
     }
+  }
 
 </script>
 
@@ -344,3 +345,4 @@
 
 
 </style>
+

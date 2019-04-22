@@ -3,7 +3,7 @@
     <div class="hero__content">
       <h1 style="width: 200px; text-align: left; color: black">Euphoria,</h1>
       <h1 style="width: 700px; text-align: left; color: black">Find the Same Soul</h1>
-      <a class="btn" href="#" style="width: 200px">Get Started</a>
+      <a class="btn" href="#/books" style="width: 200px">Get Started</a>
     </div>
 
     <dfooter style="background: rgba(28, 34, 31, 0.95)"></dfooter>
@@ -15,17 +15,17 @@
 
   import Footer from '@/components/Footer'
 
-export default {
-  name: 'HelloWorld',
-  data () {
-    return {
-      msg: 'Record Books & Find The Same Thing'
-    }
-  },
-  components: {
-    'dfooter': Footer
-  },
-}
+  export default {
+    name: 'HelloWorld',
+    data () {
+      return {
+        msg: 'Record Books & Find The Same Thing'
+      }
+    },
+    components: {
+      'dfooter': Footer
+    },
+  }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -87,3 +87,4 @@ export default {
     size: 9px;
   }
 </style>
+

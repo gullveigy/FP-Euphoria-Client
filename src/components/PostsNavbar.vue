@@ -3,13 +3,13 @@
   <div>
     <ul>
       <li><a>
-        <i class="fa fa-bookmark my-float" @click="Collect()">({{this.collectnumber}})</i>
+        <i class="fa fa-bookmark my-float" @click="Collect()" style="font-size: 20px">({{this.collectnumber}})</i>
       </a></li>
       <li><a>
-        <i class="fa fa-thumbs-up my-float" v-on:click="Upvotefor()">({{this.upvotes}})</i>
+        <i class="fa fa-thumbs-up my-float" v-on:click="Upvotefor()" style="font-size: 20px">({{this.upvotes}})</i>
       </a></li>
       <li><a>
-        <i class="fa fa-arrow-up my-float" @click="GobacktoTop()"></i>
+        <i class="fa fa-arrow-up my-float" @click="GobacktoTop()" style="font-size: 20px"></i>
       </a></li>
     </ul>
   </div>
@@ -88,6 +88,7 @@
                       title: this.discussion[0].title,
                       bookname: this.discussion[0].bookname,
                       content: this.discussion[0].content,
+                      file: this.discussion[0].file,
                       date: this.discussion[0].date,
                       upvotes: this.discussion[0].upvotes,
                       collect: this.discussion[0].collect
@@ -152,19 +153,19 @@
     height:60px;
     bottom:40px;
     right:40px;
-    background-color: #2a7c63;
+    background-color: rgba(42, 124, 99, 0.29);
     color:#FFF;
     border-radius:50px;
     text-align:center;
-    box-shadow: 2px 2px 3px #999;
+    box-shadow: 2px 2px 3px rgba(153, 153, 153, 0.23);
     z-index:1000;
     animation: bot-to-top 2s ease-out;
   }
 
   ul{
     position:fixed;
-    right:70px;
-    top: 500px;
+    right:230px;
+    top: 490px;
     padding-bottom:1px;
     bottom:80px;
     z-index:100;
@@ -177,12 +178,12 @@
   }
 
   ul li a{
-    background-color: #698075;
+    background-color: rgba(105, 128, 117, 0.29);
     color:#FFF;
     border-radius:50px;
     text-align:center;
-    box-shadow: 2px 2px 3px #999;
-    width:90px;
+    box-shadow: 2px 2px 3px rgba(153, 153, 153, 0.29);
+    width:60px;
     height:60px;
     display:block;
   }

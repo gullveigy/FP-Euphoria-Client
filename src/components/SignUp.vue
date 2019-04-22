@@ -39,7 +39,9 @@
 
         </form>
       </div>
-      <p class="botto-text">---Euphoria---</p>
+      <h6
+        style="color: rgba(255,255,255,0); font-size: 5pt; margin-bottom: 0px; margin-top: 15px; text-align: center"
+      >-----Euphoria-----</h6>
     </div>
   </div>
 
@@ -62,8 +64,29 @@
         usertype: ''
       }
     },
+    watch: {
+      email(val) {
+        if(/[A-Z]/.test(val)) {
+          this.$message({
+            message: 'E-mail address cannot contain capital letters',
+            type: 'warning',
+            duration: 1000
+          })
+        }
+      }
+    },
     methods: {
+
       signUp: function () {
+
+        if(/[A-Z]/.test(this.email)) {
+          this.$message({
+            message: 'E-mail address cannot contain capital letters',
+            type: 'warning'
+          })
+          return
+        }
+
         firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(
           (user) => {
             var newuser = {

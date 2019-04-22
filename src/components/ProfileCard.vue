@@ -1,12 +1,12 @@
 <template>
   <body>
   <div class="card">
-    <img src="../assets/suga.jpg" alt="John" style="width:100%">
+    <img v-if="userInfo && userInfo.avatar" class="avatar" :src="avatarBaseUrl + '/images/' + userInfo.avatar" alt="Ash" style="width: 300px; height: 300px; border-radius: 10px">
     <br>
     <h3><b>{{this.author}}</b></h3>
-    <p class="title">Postings: (13)</p>
-    <p class="title">Booklists: (9)</p>
-    <p>Followers: (46)</p>
+    <p class="title">Postings: (1)</p>
+    <p class="title">Booklists: (2)</p>
+    <p class="title">Followers: (1)</p>
     <b-button variant="outline-success" style="width: 200px; margin-left: auto; margin-right: auto; margin-bottom: 15px" v-on:click="followAuthor()">Follow</b-button>
   </div>
 
@@ -24,105 +24,127 @@
   import userservice from '@/services/userservice'
   import BButton from 'bootstrap-vue/es/components/button/button'
   Vue.component('b-button', BButton);
+  import { baseUrl } from '../components/utils/config.js'
 
-    export default {
-      name: "ProfileCard",
-      data() {
-        return {
-          discussion: [],
-          title: '',
-          author: '',
-          date: '',
-          username: '',
-          content: '',
-          commenttext: '',
-          useremail: '',
-          info: [],
-          uid: '',
-          authorid: ''
+  export default {
+    name: "ProfileCard",
+    data() {
+      return {
+        discussion: [],
+        title: '',
+        author: '',
+        date: '',
+        username: '',
+        content: '',
+        commenttext: '',
+        useremail: '',
+        info: [],
+        uid: '',
+        authorid: ''
 
-        }
+      }
+    },
+    created() {
+      this.getDiscussionAuthor();
+    },
+
+    computed: {
+      userInfo() {
+        return this.$store.state.userInfo
       },
-      created() {
-        this.getDiscussionAuthor();
+      avatarBaseUrl() {
+        return baseUrl
+      }
+    },
+    mounted() {
+      this.getDiscussionAuthor()
+    },
+
+    methods: {
+      getDiscussionAuthor: function () {
+        discussionservice.fetchOneDiscussion(this.$route.params.id)
+          .then(response => {
+
+            if (response) {
+              this.discussion = response.data;
+              this.title = this.discussion[0].title;
+              this.date = this.discussion[0].date;
+              this.file = this.discussion[0].file;
+              this.author = this.discussion[0].username;
+              this.content = this.discussion[0].content;
+              console.log(this.author);
+
+              userservice.fetchOneByname(this.author).then(response => {
+                if (response) {
+                  this.$store.commit("SET_USERINFO", response.data[0]);
+                }
+              });
+
+            }
+          })
       },
-      methods: {
-        getDiscussionAuthor: function () {
+
+      followAuthor: function (){
+        if (firebase.auth().currentUser) {
           discussionservice.fetchOneDiscussion(this.$route.params.id)
             .then(response => {
 
               if (response) {
                 this.discussion = response.data;
-                this.title = this.discussion[0].title;
-                this.date = this.discussion[0].date;
                 this.author = this.discussion[0].username;
-                this.content = this.discussion[0].content;
-                console.log(this.author)
-              }
-            })
-        },
+                console.log(this.author);
 
-        followAuthor: function (){
-          if (firebase.auth().currentUser) {
-            discussionservice.fetchOneDiscussion(this.$route.params.id)
-              .then(response => {
+                userservice.fetchOneByname(this.author)
+                  .then(response => {
+                    if (response) {
+                      console.log(this.author);
+                      this.info = response.data;
 
-                if (response) {
-                  this.discussion = response.data;
-                  this.author = this.discussion[0].username;
-                  console.log(this.author);
-
-                  userservice.fetchOneByname(this.author)
-                    .then(response => {
-                      if (response) {
-                        console.log(this.author);
-                        this.info = response.data;
-
-                        userservice.upvoteforAuthor(this.info[0]._id)
-                           .then(response => {
-                             if (response) {
-                               console.log(response.data);
-                             }
-                           })
-                        }
+                      userservice.upvoteforAuthor(this.info[0]._id)
+                        .then(response => {
+                          if (response) {
+                            console.log(response.data);
+                          }
+                        })
+                    }
                   })
-                }
+              }
 
-              });
-            this.$swal({
-              title: 'Follow Successfully!',
-              text: 'Go Back to Personal Center to Check It?',
-              type: 'success',
-              showCancelButton: true,
-              confirmButtonText: 'OK, Go',
-              cancelButtonText: 'No, thx',
-              showCloseButton: true
-              // showLoaderOnConfirm: true
-            }).then((result) => {
-              if (result.value === true) {
-                this.$router.replace('/userprofile')
-              } else this.$router.replace('/postcontent')
-            })
-          }else {
-            this.$swal({
-              title: 'You need to login first!',
-              text: 'You can\'t do this action',
-              type: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'OK, Go login',
-              cancelButtonText: 'No, thx',
-              showCloseButton: true
-              // showLoaderOnConfirm: true
-            }).then((result) => {
-              if (result.value === true) {
-                this.$router.replace('login')
-              } else this.$router.replace('/')
-            })
-          }
-          },
-
+            });
+          this.$swal({
+            title: 'Follow Successfully!',
+            text: 'Go Back to Personal Center to Check It?',
+            type: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'OK, Go',
+            cancelButtonText: 'No, thx',
+            showCloseButton: true
+            // showLoaderOnConfirm: true
+          }).then((result) => {
+            if (result.value === true) {
+              this.$router.replace('/userprofile')
+            } else this.$router.replace('/postcontent')
+          })
+        }else {
+          this.$swal({
+            title: 'You need to login first!',
+            text: 'You can\'t do this action',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'OK, Go login',
+            cancelButtonText: 'No, thx',
+            showCloseButton: true
+            // showLoaderOnConfirm: true
+          }).then((result) => {
+            if (result.value === true) {
+              this.$router.replace('login')
+            } else this.$router.replace('/')
+          })
         }
+      },
+
     }
+  }
 </script>
 
 <style scoped>
@@ -145,18 +167,6 @@
     font-size: 18px;
   }
 
-  .button {
-    border: none;
-    outline: 0;
-    display: inline-block;
-    padding: 8px;
-    color: white;
-    background-color: #3498DB;
-    text-align: center;
-    cursor: pointer;
-    width: 100%;
-    font-size: 18px;
-  }
 
   a {
     text-decoration: none;

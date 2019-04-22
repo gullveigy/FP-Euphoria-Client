@@ -13,9 +13,9 @@
         <div class="col-md-4 mx-auto">
 
           <!-- Content -->
-          <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Footer Content</h5>
-          <p>Here you can use rows and columns here to organize your footer content. Lorem ipsum dolor sit amet, consectetur
-            adipisicing elit.</p>
+          <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Details</h5>
+          <p>An Online Book Review and Purchase Web Application to Provide Users With an Efficient and Flexible Book Selection Method.
+            Combined With Book Preview and High-quality Book Review Forum Help Users Purchase Books of Interest Accurately and Generate Booklists Online.</p>
 
         </div>
         <!-- Grid column -->
@@ -26,20 +26,17 @@
         <div class="col-md-2 mx-auto">
 
           <!-- Links -->
-          <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Links</h5>
+          <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Book Search & Purchase</h5>
 
           <ul class="list-unstyled">
             <li>
-              <a href="#!">Link 1</a>
+              <a href="#/books">Search Books</a>
             </li>
             <li>
-              <a href="#!">Link 2</a>
+              <a href="#/books">Preview Books</a>
             </li>
             <li>
-              <a href="#!">Link 3</a>
-            </li>
-            <li>
-              <a href="#!">Link 4</a>
+              <a href="#books">Purchase Books</a>
             </li>
           </ul>
 
@@ -52,20 +49,17 @@
         <div class="col-md-2 mx-auto">
 
           <!-- Links -->
-          <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Links</h5>
+          <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Book Evaluation</h5>
 
           <ul class="list-unstyled">
             <li>
-              <a href="#!">Link 1</a>
+              <a href="#/douban">Book Forum</a>
             </li>
             <li>
-              <a href="#!">Link 2</a>
+              <a href="#/addpost">Post</a>
             </li>
             <li>
-              <a href="#!">Link 3</a>
-            </li>
-            <li>
-              <a href="#!">Link 4</a>
+              <a href="#/contact">Contact Us</a>
             </li>
           </ul>
 
@@ -78,20 +72,17 @@
         <div class="col-md-2 mx-auto">
 
           <!-- Links -->
-          <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Links</h5>
+          <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Booklist Generation</h5>
 
           <ul class="list-unstyled">
             <li>
-              <a href="#!">Link 1</a>
+              <a href="#/books">Search Books</a>
             </li>
             <li>
-              <a href="#!">Link 2</a>
+              <a href="#/booksearch">Generate Booklist</a>
             </li>
             <li>
-              <a href="#!">Link 3</a>
-            </li>
-            <li>
-              <a href="#!">Link 4</a>
+              <a href="#/login">Login First</a>
             </li>
           </ul>
 
@@ -146,7 +137,7 @@
     <!-- Social buttons -->
 
     <!-- Copyright -->
-    <div class="footer-copyright text-center py-3">© 2018 Copyright:
+    <div class="footer-copyright text-center py-3">© 2019 Copyright:
       <a href="https://mdbootstrap.com/education/bootstrap/"> MDBootstrap.com</a>
     </div>
     <!-- Copyright -->
@@ -157,9 +148,9 @@
 </template>
 
 <script>
-    export default {
-        name: "Footer"
-    }
+  export default {
+    name: "Footer"
+  }
 </script>
 
 <style scoped>

@@ -22,7 +22,7 @@
 							  <input type="text"
 							         class="form-control"
 							         placeholder="Enter your name"
-											 v-model="user.Name"
+											 v-model="user.username"
 							         required>
 							</div>
 							<div class="form-group">
@@ -72,8 +72,10 @@
 										 v-model="card.exp"
 										 required>
 						</div>
-            <button class="btn btn-primary btn-block"  @click.prevent="validate" :disabled="stripeCheck">Submit</button>
+            <button class="btn btn-primary btn-block"  @click.prevent="validate" :disabled="stripeCheck" >Submit</button>
             </form>
+
+
 						<div v-show="errors">
 							<br>
 							<ol class="text-danger">
@@ -90,6 +92,10 @@
 </template>
 <script>
 import payservice from '@/services/payservice'
+import orderservice from '@/services/orderservice'
+import userservice from "@/services/userservice";
+import firebase from "firebase";
+
 export default {
   props: [ 'book'],
   data() {
@@ -98,6 +104,7 @@ export default {
 				address:'',
 				phone: '',
 				email: '',
+				username: ''
 			},
 			card: {
 				number: '4242424242424242',
@@ -109,9 +116,58 @@ export default {
 			errors: [],
 			stripePublishableKey: 'pk_test_L1TsC7fE3BjKNMmTShcCiwEZ00OhZ1tFfU',
 			stripeCheck: false,
+			currentUserInfo: '',
+			order: ''
 		};
 	},
+
+	mounted() {
+		this.getUserInfo()
+	},
+
   methods: {
+		getUserInfo() {
+      var useremail = firebase.auth().currentUser.email;
+      userservice.fetchOneUser(useremail).then(response => {
+        if (response) {
+					this.currentUserInfo = response.data[0]
+					console.log( this.currentUserInfo)
+        }
+      });
+    },
+
+		createOrder() {
+			const { authors, price, title, imgUrl } = this.book
+			const { number, cvc, exp, currency, name } = this.card
+			const { username,address, phone, email } = this.user
+			const { _id } = this.currentUserInfo
+			let data = {
+				username: username,
+				email: email,
+				phone: phone,
+				address: address,
+				authors: authors,
+				price: price,
+				bookname: title,
+				bookcover: imgUrl,
+				userid: _id
+			}
+			orderservice.createOrder(data)
+			.then( res => {
+				console.log( res );
+				if(res.data.data) {
+					this.order = res.data.data
+					this.createToken();
+				} else {
+					console.log(res.data.errmsg);
+					alert(res.data.message);
+				}
+			})
+			.catch(err => {
+				alert(res.data.message);
+			})
+		},
+
     createToken () {
 				this.stripeCheck = true;
 				window.Stripe.setPublishableKey(this.stripePublishableKey);
@@ -156,7 +212,7 @@ export default {
 					this.errors.push('Expiration date is required');
 				}
 				if (valid) {
-					this.createToken();
+					this.createOrder();
 				}
 		},
   },

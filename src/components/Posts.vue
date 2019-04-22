@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <profilecard></profilecard>
+    <profilecard style="margin-left: 120px"></profilecard>
 
     <postsnavbar></postsnavbar>
 
@@ -16,10 +16,12 @@
               <div class="">
                 <h1  class="hidden-xs hidden-sm"> {{this.title}}</h1>
                 <hr>
+                <p1 style="font-weight: bold"> Book Name:  {{this.bookname}}</p1><br>
                 <p1 style="font-weight: bold"> Publish Date:  {{this.date.substring(0,10)}}</p1><br>
-                <p1><strong> Published By:  {{this.author}}</strong></p1>
                 <hr>
+
                 <p class="detail-text" v-html="text">{{this.text}}</p>
+                <hr>
               </div>
             </div>
 
@@ -31,18 +33,17 @@
                 <div class="col-md-12">
 
                   <div class="widget-area no-padding blank">
-                    <div class="status-upload">
-                      <h2 class="page-header" style="margin-left: 18px">Add Comments</h2>
-                      <form>
-                        <textarea v-model="commenttext" placeholder="Say Something ?" ></textarea>
-                        <button type="button" class="btn btn-success green" @click="addDiscomment()" v-b-modal="'myModal'"><i class="fa fa-share"></i> Comment</button>
-                      </form>
 
-                      <b-modal id="myModal">
-                        <p>You Have Commented Successfully! </p>
-                      </b-modal>
+                    <form>
+                      <textarea v-model="commenttext" placeholder="Say Something ?" style="width: 100%; height: 150px; border-color: darkslategray; border-radius: 10px"></textarea>
+                      <b-button variant="outline-success" @click="addDiscomment()" v-b-modal="'myModal'"><i class="fa fa-share"></i> Comment</b-button>
+                    </form>
 
-                    </div><!-- Status Upload  -->
+                    <b-modal id="myModal">
+                      <p>You Have Commented Successfully! </p>
+                    </b-modal>
+
+
                   </div><!-- Widget Area -->
                 </div>
 
@@ -64,10 +65,13 @@
         <div class="row">
 
           <div class="col-md-12">
+
+            <hr>
             <h2 class="page-header">Comments</h2>
 
             <div v-show="discomments.length===0">
-              <p style="font-size: 15px">No Comments Right Now! Waiting For You to Add ...</p>
+              <p style="font-size: 18px; margin-top: 15px">No Comments Right Now! Waiting For You to Add ...</p>
+              <h6 style="color: rgba(255,255,255,0); font-size: 5pt; margin-top: 25px; margin-bottom: 0px; text-align: center">-----Euphoria-----</h6>
             </div>
 
             <section class="comment-list">
@@ -75,20 +79,28 @@
               <article class="row" v-for="(discomment, index) in discomments" :key="index">
                 <div class="col-md-9 col-sm-9">
 
-                  <div class="panel-body">
-                    <header class="text-left">
-                      <div class="comment-user"><i class="fa fa-user"></i> {{discomment.username}}</div>
-                      <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> {{discomment.date.substring(0,10)}}</time>
+                  <div class="panel-body" style="background-color: gainsboro; width: 593px">
+                    <header class="text-left" style="background-color: gainsboro">
+                      <div class="comment-user" style="font-size: 18px; background-color: gainsboro; margin-left: 10px"><i class="fa fa-user"></i> {{discomment.username}}</div>
+                      <time class="comment-date" datetime="16-12-2014 01:05" style="font-size: 18px; margin-left: 10px"><i class="fa fa-clock-o"></i> {{discomment.date.substring(0,10)}}</time>
                     </header>
-                    <div class="comment-post">
-                      <p3>
+                    <div class="comment-post" style="background-color: gainsboro">
+                      <p style="margin-top: 8px; font-size: 15px; margin-left: 20px">
                         {{discomment.content}}
-                      </p3>
+                      </p>
+                      <i class="fa fa-thumbs-up" style="margin-left: 10px; margin-right: 20px" v-on:click="UpvoteforDiscomment(discomment._id)">({{discomment.upvotes}})</i>
+                      <i class="fa fa-thumbs-down" v-on:click="DownvoteforDiscomment(discomment._id)">({{discomment.downvotes}})</i>
                     </div>
-                    <p class="text-right"><a href="#" class="btn btn-default btn-sm"><i class="fa fa-reply"></i> reply</a></p>
+
                   </div>
 
+
+                  <h6 style="color: rgba(255,255,255,0); font-size: 5pt; margin-top: 15px; margin-bottom: 0px; text-align: center">-----Euphoria-----</h6>
+
                 </div>
+
+
+
               </article>
 
             </section>
@@ -116,6 +128,7 @@
         discussion: [],
         discomments: [],
         info:[],
+        userinfo: [],
         title: '',
         author: '',
         date: '',
@@ -123,7 +136,10 @@
         content: '',
         text: '',
         commenttext: '',
-        useremail: ''
+        useremail: '',
+        file: '',
+        replytext: '',
+        currentuser: firebase.auth().currentUser
       }
     },
     created () {
@@ -135,6 +151,7 @@
       'profilecard': ProfileCard,
       'postsnavbar': PostsNavbar
     },
+
     methods: {
       getOneDiscussion: function () {
         discussionservice.fetchOneDiscussion(this.$route.params.id)
@@ -144,7 +161,9 @@
               this.discussion = response.data;
               this.title = this.discussion[0].title;
               this.date = this.discussion[0].date;
+              this.bookname = this.discussion[0].bookname;
               this.author = this.discussion[0].username;
+              this.file = this.discussion[0].file;
               this.content = this.discussion[0].content;
               this.text = this.discussion[0].content.replace(/\n/gm,"<br/>");
 
@@ -162,6 +181,25 @@
 
           })
       },
+
+      UpvoteforDiscomment: function (dcid) {
+        discommentservice.upvotefor(dcid)
+          .then(response => {
+            console.log(response.data);
+            this.getDiscomment();
+
+          })
+      },
+
+      DownvoteforDiscomment: function (dcid) {
+        discommentservice.downvotefor(dcid)
+          .then(response => {
+            console.log(response.data);
+            this.getDiscomment();
+
+          })
+      },
+
       addDiscomment: function () {
         if (firebase.auth().currentUser) {
 
@@ -221,7 +259,7 @@
 
   div {
     text-align: left;
-    background: #f0f8ff;
+    background: #ffffff;
     color: black;
   }
 
