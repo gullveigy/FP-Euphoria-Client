@@ -46,9 +46,10 @@ h2 {
   border-bottom: 1px solid #ccc;
   margin-top: 30px;
   height: 50px;
+  padding: 0 2.5%;
 }
 .header-right {
-  width: 280px;
+  width: 420px;
 }
 .header-right-item {
   width: 140px;
@@ -66,6 +67,16 @@ h2 {
   font-size: 18px;
   color: #000;
   font-weight: 500;
+}
+
+.order-book-list {
+  padding: 15px 0;
+  width: 95%;
+  margin: 0 auto;
+}
+
+.quantity {
+  text-align: center;
 }
 
 </style>
@@ -87,28 +98,33 @@ h2 {
         <div class="order-list-header flex-between">
           <div>PRODUCT</div>
           <div class="header-right flex-between">
+            <div class="header-right-item-price">Quantity</div>
             <div class="header-right-item-price">PRICE</div>
             <div class="header-right-item">TOTAL</div>
           </div>
         </div>
-        <div class="order-item flex-between" v-for="(item, index) of filterOrder" :key="index">
-            <div class="flex-between">
-              <div class="book-cover">
-                <img :src="item.bookcover">
+        <div class="order-item" v-for="(item, index) of orderList" :key="index">
+            <div class="order-book-list flex-between" v-for="(book, ind) of item.bookList" :key="ind">
+              <div class="flex-between">
+                <div class="book-cover">
+                  <img :src="book.bookcover">
+                </div>
+                <div class="book-info">
+                  <div class="book-name">{{book.bookname}}</div>
+                  <div>{{book.authors}}</div>
+                  <div>{{item.createtime}}</div>
+                  <div>Status: {{item.status == '1' ? "Processed" : "Untreated"}}</div>
+                </div>
               </div>
-              <div class="book-info">
-                <div class="book-name">{{item.bookname}}</div>
-                <div>{{item.authors}}</div>
-                <div>Time of purchase: {{item.createtime}}</div>
-                <div>Order Status: {{item.status == '1' ? "Processed" : "Untreated"}}</div>
+              <div class="flex-between">
+                <div class="right-info quantity">{{book.num}}</div>
+                <div class="right-info">${{book.price}}</div>
+                <div class="right-info">
+                  ${{ typeof book.price === "number" ? book.price * 2 : book.price}}
+                </div>
               </div>
-            </div>
-            <div class="flex-between">
-              <div class="right-info">${{item.price}}</div>
-              <div class="right-info">${{item.price}}</div>
             </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -118,7 +134,6 @@ h2 {
 import orderservice from "@/services/orderservice";
 import firebase from "firebase";
 import userservice from "@/services/userservice";
-import { close } from 'fs';
 
 export default {
   name: "OrderManage",
@@ -130,13 +145,6 @@ export default {
     };
   },
   computed: {
-    filterOrder() {
-      return this.orderList.map((item) => {
-        item.authors = item.authors.join(' ')
-        item.createtime = item.createtime.substring(0,10)
-        return item
-      })
-    },
     userInfo() {
       return this.$store.state.userInfo
     },
@@ -155,7 +163,16 @@ export default {
         this.loading = true
         orderservice.orderList(this.pageSize, this.currentPage, this.userInfo._id).then(res => {
             if (res.data.data) {
-                this.orderList = res.data.data;
+                let arr = res.data.data
+                for( let i in arr ) {
+                  let n_arr = arr[i].bookList
+                  for(let j in n_arr) {
+                    n_arr[j].authors = n_arr[j].authors.join(', ')
+                  }
+                  arr[i].createtime = arr[i].createtime.substring(0,10)
+                }
+                console.log(arr);
+                this.orderList = arr
                 this.totalCount = res.data.totalCount;
             }
             this.loading = false

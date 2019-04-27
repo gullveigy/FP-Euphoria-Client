@@ -9,6 +9,7 @@ import LogOut from '@/components/LogOut'
 import UserProfile from '@/components/UserProfile'
 import Postings from '@/components/Postings'
 import Booklist from '@/components/Booklist'
+import BooklistForView from '@/components/BooklistForView'
 import Posts from '@/components/Posts'
 import AddPost from '@/components/AddPost'
 import Contact from '@/components/Contact'
@@ -29,6 +30,11 @@ Vue.use(Router);
 
 const router = new Router({
   routes: [
+    {
+      path: '*',
+      name: 'Home',
+      component: Home
+    },
     {
       path: '/',
       name: 'Home',
@@ -84,6 +90,11 @@ const router = new Router({
       component: Booklist
     },
     {
+      path: '/booklistforview',
+      name: 'BooklistForView',
+      component: BooklistForView
+    },
+    {
       path: '/contact',
       name: 'Contact',
       component: Contact
@@ -100,12 +111,16 @@ const router = new Router({
     {
 		  path: '/books',
 		  name: 'Booksearch',
-		  component: Booksearch
+      component: Booksearch,
+      meta: {
+        requireAuth: true
+      }
 		},
 		{
 		  path: '/bookPreview',
 		  name: 'Bookpreview',
-		  component: Bookpreview
+      component: Bookpreview,
+      requireAuth: true
 		},
     {
       path: '/blog',
@@ -117,7 +132,8 @@ const router = new Router({
       name: 'OrderManage',
       component: OrderManage,
       meta: {
-        requireAdmin: true
+        requireAdmin: true,
+        requireAuth: true
       }
     },
     {
@@ -135,7 +151,6 @@ const router = new Router({
       meta: {
         requireAuth: true
       }
-
     },
 
   ]
@@ -145,21 +160,30 @@ router.beforeEach((to, from, next) => {
   const currentUser = firebase.auth().currentUser
   const requireAuth = to.matched.some(record => record.meta.requireAuth)
   const requireAdmin = to.matched.some(record => record.meta.requireAdmin)
-  if (requireAuth && !currentUser) {
-    next('login')
-  } 
 
-  if( requireAdmin ) {
-    let useremail = firebase.auth().currentUser.email
-    userservice.fetchOneUser(useremail).then(response => {
-      if (response.data[0].usertype === 'admin') {
-        next('')
+  if( requireAuth ) {
+
+    if(currentUser) {
+      if( requireAdmin) {
+        let useremail = firebase.auth().currentUser.email
+        userservice.fetchOneUser(useremail).then(response => {
+          if (response.data[0].usertype === 'admin') {
+            next()
+          } else {
+            alert('You are not an administrator')
+            next('/userprofile')
+          }
+        });
       } else {
-        next('/')
+        next()
       }
-    });
+    } else {
+      next('login')
+    }
+  } else {
+    next()
   }
-  next()
+
 })
 export default router
 

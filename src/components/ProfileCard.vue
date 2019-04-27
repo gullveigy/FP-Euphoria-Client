@@ -4,9 +4,9 @@
     <img v-if="userInfo && userInfo.avatar" class="avatar" :src="avatarBaseUrl + '/images/' + userInfo.avatar" alt="Ash" style="width: 300px; height: 300px; border-radius: 10px">
     <br>
     <h3><b>{{this.author}}</b></h3>
-    <p class="title">Postings: (1)</p>
-    <p class="title">Booklists: (2)</p>
-    <p class="title">Followers: (1)</p>
+    <p>Postings: ({{this.authordiscussion.length}})</p>
+    <p>Booklists: ({{this.authorbooklistdir.length}})</p>
+    <p>Followers: ({{this.authorfollower}})</p>
     <b-button variant="outline-success" style="width: 200px; margin-left: auto; margin-right: auto; margin-bottom: 15px" v-on:click="followAuthor()">Follow</b-button>
   </div>
 
@@ -22,6 +22,8 @@
   import firebase from 'firebase'
   import discussionservice from '@/services/discussionservice'
   import userservice from '@/services/userservice'
+  import followservice from '@/services/followservice'
+  import booklistdirservice from '@/services/booklistdirservice'
   import BButton from 'bootstrap-vue/es/components/button/button'
   Vue.component('b-button', BButton);
   import { baseUrl } from '../components/utils/config.js'
@@ -40,12 +42,20 @@
         useremail: '',
         info: [],
         uid: '',
-        authorid: ''
-
+        authorid: '',
+        followername: '',
+        followeremail: '',
+        email: '',
+        authorinfo: [],
+        authorfollower: '',
+        authoremail: '',
+        authordiscussion: [],
+        authorbooklistdir: []
       }
     },
     created() {
       this.getDiscussionAuthor();
+      this.getDAuthorInfo();
     },
 
     computed: {
@@ -84,6 +94,40 @@
           })
       },
 
+
+      getDAuthorInfo: function () {
+        discussionservice.fetchOneDiscussion(this.$route.params.id)
+          .then(response => {
+            if (response) {
+              this.discussion = response.data;
+              this.author = this.discussion[0].username;
+
+              userservice.fetchOneByname(this.author).then(response => {
+                if (response) {
+                  this.authorinfo = response.data;
+                  this.authorfollower = this.authorinfo[0].followers;
+                  this.authoremail = this.authorinfo[0].email;
+
+
+                  discussionservice.fetchUserDiscussion(this.authoremail)
+                    .then(response => {
+                      if (response) {
+                        this.authordiscussion = response.data;
+                      }
+                    });
+
+                  booklistdirservice.fetchUserDir(this.authoremail)
+                    .then(response => {
+                      if (response) {
+                        this.authorbooklistdir = response.data;
+                      }
+                    })
+                }
+              })
+            }
+          })
+      },
+
       followAuthor: function (){
         if (firebase.auth().currentUser) {
           discussionservice.fetchOneDiscussion(this.$route.params.id)
@@ -105,6 +149,20 @@
                           if (response) {
                             console.log(response.data);
                           }
+                        });
+
+
+                      var newfollow = {
+                        email: firebase.auth().currentUser.email,
+                        followername: this.info[0].username,
+                        followeremail: this.info[0].email
+                      };
+
+
+                      followservice.addFollower(newfollow)
+                        .then(response => {
+                          console.log(response.data);
+                          this.getDiscussionAuthor();
                         })
                     }
                   })

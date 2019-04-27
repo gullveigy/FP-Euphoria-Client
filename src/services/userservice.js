@@ -20,6 +20,10 @@ export default {
 
   upvoteforAuthor (id) {
     return Api().put(`/currentuser/${id}/follow`)
+  },
+
+  cancelfollowAuthor (id) {
+    return Api().put(`/currentuser/${id}/notfollow`)
   }
 }
 

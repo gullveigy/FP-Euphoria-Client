@@ -68,7 +68,10 @@
     <div id="UserCardsProfile">
       <b-card no-body>
         <b-tabs card>
-          <b-tab no-body title="Postings Of">
+          <b-tab no-body title="Posts">
+
+            <p v-show="this.discussions.length===0" style="font-size: 18px; margin-top: 25px; color: black">You has not posted any book review...</p>
+
             <div id="Postings" v-for="(discussion, index) in discussions" :key="index">
               <div id="media">
                 <ul class="list-unstyled">
@@ -95,6 +98,9 @@
           </b-tab>
 
           <b-tab no-body title="Booklist">
+
+            <p v-show="this.booklistdirs.length===0" style="font-size: 18px; margin-top: 25px; color: black">You has not created any book list...</p>
+
             <div id="addmodal">
               <b-button v-b-modal.modalPut>Create New</b-button>
               <b-modal
@@ -135,6 +141,9 @@
           </b-tab>
 
           <b-tab title="Post Collection">
+
+            <p v-show="this.collecteddis.length===0" style="font-size: 18px; margin-top: 25px; color: black">You has not collected any book review...</p>
+
             <div id="CollectedPostings" v-for="(collected, index) in collecteddis" :key="index">
               <div id="Collectedmedia">
                 <ul class="list-unstyled">
@@ -157,6 +166,30 @@
               </div>
             </div>
           </b-tab>
+
+
+          <b-tab title="Following">
+
+            <p v-show="this.Userfollowing.length===0" style="font-size: 18px; margin-top: 25px; color: black">You has not followed any user...</p>
+
+            <div id="Follow">
+              <ul class="list-unstyled" v-for="(following, index) in Userfollowing" :key="index">
+                <b-media tag="li" class="my-4" style="text-align: center">
+                  <h5 class="mt-0 mb-1" style="font-size: 20px">{{following.followername}}
+                  </h5>
+
+                  <b-button variant="outline-dark" style="margin-right: 310px" v-on:click="function(){RemoveFollow(following._id);ReduceFollow(following.followername);}">Remove Follow</b-button>
+                  <b-button variant="outline-info" style=""v-on:click="getUserIDandGo(following.followeremail)">Homepage</b-button>
+
+
+
+                </b-media>
+                <hr>
+              </ul>
+            </div>
+          </b-tab>
+
+
         </b-tabs>
       </b-card>
     </div>
@@ -172,6 +205,7 @@ import firebase from "firebase";
 import userservice from "@/services/userservice";
 import discussionservice from "@/services/discussionservice";
 import booklistdirservice from "@/services/booklistdirservice";
+import followservice from "@/services/followservice";
 import collecteddiscussionservice from "@/services/collecteddiscussionservice";
 import Subfooter from "./Subfooter";
 import { baseUrl } from './utils/config.js'
@@ -189,10 +223,12 @@ export default {
       booklistdirs: [],
       collecteddis: [],
       info: [],
+      Finfo: [],
       name: "",
       upvotes: "",
       signature: "",
       booklistname: "",
+      Userfollowing: [],
       followers: "",
       userid: "",
       headers: {
@@ -219,6 +255,7 @@ export default {
     this.fetchCollected();
     this.getlistID();
     this.upvotefor();
+    this.getCUserFollowing();
   },
   methods: {
 
@@ -322,6 +359,81 @@ export default {
       }
     },
 
+    getUserIDandGo: function(Fid) {
+      console.log(Fid);
+      if (Fid) {
+        this.$router.push({
+          name: "OtherProfile",
+          params: {
+            id: Fid
+          }
+        })
+      }
+    },
+
+    ReduceFollow: function (name) {
+      userservice.fetchOneByname(name).then(response => {
+        if (response) {
+          console.log(response);
+          this.Finfo = response.data;
+          this.userid = this.Finfo[0]._id;
+
+          console.log(this.userid);
+
+          userservice.cancelfollowAuthor(this.userid).then(response => {
+            if (response) {
+              console.log(response.data);
+              this.showUserInfo();
+            }
+          })
+        }
+      });
+    },
+
+    RemoveFollow: function(id) {
+      this.$swal({
+        title: "Are you totaly sure?",
+        text: "You can't Undo this action",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "OK Remove it",
+        cancelButtonText: "Cancel",
+        showCloseButton: true
+        // showLoaderOnConfirm: true
+      }).then(result => {
+        console.log("SWAL Result : " + result.value);
+        if (result.value === true) {
+          followservice
+            .deleteFollowing(id)
+            .then(response => {
+              // JSON responses are automatically parsed.
+              this.message = response.data;
+              console.log(this.message);
+              this.getCUserFollowing();
+              // Vue.nextTick(() => this.$refs.vuetable.refresh())
+              this.$swal(
+                "Removed",
+                "You successfully remove this Following " +
+                JSON.stringify(response.data, null, 5),
+                "success"
+              );
+            })
+            .catch(error => {
+              this.$swal(
+                "ERROR",
+                "Something went wrong trying to Remove " + error,
+                "error"
+              );
+              this.errors.push(error);
+              console.log(error);
+            });
+        } else {
+          console.log("SWAL Else Result : " + result.value);
+          this.$swal("Cancelled", "Your Follow still Counts!", "info");
+        }
+      });
+    },
+
     deleteposting: function(id) {
       this.$swal({
         title: "Are you totaly sure?",
@@ -382,6 +494,16 @@ export default {
           this.collecteddis = response.data;
           console.log(this.collecteddis);
         });
+    },
+
+
+    getCUserFollowing: function() {
+      var useremail = firebase.auth().currentUser.email;
+      followservice.fetchUserFollowing(useremail)
+        .then(response => {
+          this.Userfollowing = response.data;
+          console.log(this.Userfollowing);
+        })
     },
 
     upvotefor: function(bid) {

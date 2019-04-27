@@ -74,8 +74,6 @@
 						</div>
             <button class="btn btn-primary btn-block"  @click.prevent="validate" :disabled="stripeCheck" >Submit</button>
             </form>
-
-
 						<div v-show="errors">
 							<br>
 							<ol class="text-danger">
@@ -141,17 +139,24 @@ export default {
 			const { number, cvc, exp, currency, name } = this.card
 			const { username,address, phone, email } = this.user
 			const { _id } = this.currentUserInfo
+
+			let bookList = [{
+				authors: authors,
+				price: price,
+				bookname: title,
+				bookcover: imgUrl,
+				num: 1
+			}]
+
 			let data = {
 				username: username,
 				email: email,
 				phone: phone,
 				address: address,
-				authors: authors,
-				price: price,
-				bookname: title,
-				bookcover: imgUrl,
+				bookList: bookList,
 				userid: _id
 			}
+
 			orderservice.createOrder(data)
 			.then( res => {
 				console.log( res );

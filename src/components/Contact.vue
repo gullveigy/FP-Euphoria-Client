@@ -69,9 +69,6 @@
           Ctitle: ''
         }
       },
-      created() {
-
-      },
       methods: {
         addcontact: function () {
 
@@ -83,18 +80,20 @@
                 if (response) {
                   this.info = response.data;
                   console.log(this.info);
+
+                  var newcontact = {
+                    username: this.info[0].username,
+                    title: this.Ctitle,
+                    phonenumber: this.Ctelephone,
+                    content: this.Cmessage,
+                    email: this.info[0].email,
+                    date: ''
+                  };
+                  contactservice.addContact(newcontact);
+
                 }
               });
 
-            var newcontact = {
-              username: this.info[0].username,
-              title: this.Ctitle,
-              phonenumber: this.Ctelephone,
-              content: this.Cmessage,
-              email: this.info[0].email,
-              date: ''
-            };
-            contactservice.addContact(newcontact);
 
             this.$swal({
               title: 'Send Message Successfully!',

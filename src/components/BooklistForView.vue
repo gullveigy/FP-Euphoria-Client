@@ -1,90 +1,74 @@
 <template>
-<div id="booklistpage">
-  <div>
+  <div id="booklistpage">
+    <div>
 
-    <div class="backtotop">
-      <ul>
-        <li><a>
-          <i class="fa fa-arrow-up my-float" @click="GobacktoTop()"></i>
-        </a></li>
-      </ul>
-    </div>
+      <div class="backtotop">
+        <ul>
+          <li><a>
+            <i class="fa fa-arrow-up my-float" @click="GobacktoTop()"></i>
+          </a></li>
+        </ul>
+      </div>
 
-    <div id = "listboard">
+      <div id = "listboard">
 
-      <h3 class="vue-title"><i class="fa fa-list" style="padding: 3px"></i> {{this.messagetitle}}</h3>
-      <div id="pdfDom">
-        <div id="app1">
-          <v-client-table :columns="columns" :data="booklists" :options="options">
-            <a slot="remove" slot-scope="props" class="fa fa-trash-o fa-2x" @click="deleteBook(props.row._id)" style="cursor: pointer"></a>
-          </v-client-table>
+        <h3 class="vue-title"><i class="fa fa-list" style="padding: 3px"></i> {{this.messagetitle}}</h3>
+        <div id="pdfDom">
+          <div id="app1">
+            <v-client-table :columns="columns" :data="booklists" :options="options">
+            </v-client-table>
+          </div>
         </div>
-      </div>
-      <div id = "addmodal">
-        <b-button v-b-modal.modalPut>Add Comments</b-button>
-        <b-button v-b-modal.modalPrevent>Add Books</b-button>
-        <b-button v-on:click="getPdf()">Export PDF</b-button>
-        <b-modal
-          id="modalPrevent"
-          ref="modal"
-          title="Book Details"
-          @ok="handleOk"
-          @shown="clearName"
-        >
-          <form @submit.stop.prevent="handleSubmit">
-            <p>Book Name:</p>
-            <b-form-input type="text" placeholder="Enter book name" v-model="bookname" />
-            <p>Book Author:</p>
-            <b-form-input type="text" placeholder="Enter book author" v-model="author" />
-          </form>
-        </b-modal>
+        <div id = "addmodal">
+          <b-button v-b-modal.modalPut>Add Comments</b-button>
+          <b-button v-on:click="getPdf()">Export PDF</b-button>
 
-        <b-modal
-          id="modalPut"
-          ref="modal"
-          title="Add Comments For"
-          @ok="handlethisOK"
-          @shown="clearComment"
-        >
-          <form @submit.stop.prevent="handleSubmitCo">
+          <b-modal
+            id="modalPut"
+            ref="modal"
+            title="Add Comments For"
+            @ok="handlethisOK"
+            @shown="clearComment"
+          >
+            <form @submit.stop.prevent="handleSubmitCo">
 
-            <p>Your Comment:</p>
-            <b-form-textarea type="area" placeholder="Enter comment here" v-model="comment" />
-          </form>
-        </b-modal>
+              <p>Your Comment:</p>
+              <b-form-textarea type="area" placeholder="Enter comment here" v-model="comment" />
+            </form>
+          </b-modal>
+        </div>
+
       </div>
 
-    </div>
 
+      <div class="comment-body">
+        <h5 style="margin-top: 159px">Comment For {{this.messagetitle}}</h5>
 
-    <div class="comment-body">
-    <h5 style="margin-top: 159px">Comment For {{this.messagetitle}}</h5>
+        <div v-show="Bcomments.length===0">
+          <p style="font-size: 15px; margin-top: 30px">No Comments Right Now! Waiting For You to Add ...</p>
+        </div>
 
-    <div v-show="Bcomments.length===0">
-      <p style="font-size: 15px; margin-top: 30px">No Comments Right Now! Waiting For You to Add ...</p>
-    </div>
+        <div id="comment" v-for="(Bcomment, index) in Bcomments" :key="index">
+          <div id="card">
+            <b-card>
+              <b-card-text>
+                {{Bcomment.comment}}
+              </b-card-text>
+              <sub-title>By  {{Bcomment.username}} at {{Bcomment.date.substring(0,10)}}</sub-title>
 
-    <div id="comment" v-for="(Bcomment, index) in Bcomments" :key="index">
-      <div id="card">
-      <b-card>
-        <b-card-text>
-          {{Bcomment.comment}}
-        </b-card-text>
-        <sub-title>By  {{Bcomment.username}} at {{Bcomment.date.substring(0,10)}}</sub-title>
+              <i class="fa fa-trash" v-show="Cusername === Bcomment.username" @click="deleteBcomment(Bcomment._id)"></i>
+              <i class="fa fa-heart" @click="upvoteBcomment(Bcomment._id)"> ({{Bcomment.upvotes}})</i>
+            </b-card>
+          </div>
+        </div>
 
-        <i class="fa fa-trash" v-show="Cusername === Bcomment.username" @click="deleteBcomment(Bcomment._id)"></i>
-        <i class="fa fa-heart" @click="upvoteBcomment(Bcomment._id)"> ({{Bcomment.upvotes}})</i>
-      </b-card>
       </div>
-    </div>
 
     </div>
+
+    <h6 style="color: rgba(255,255,255,0); font-size: 5pt; margin-bottom: 0px; margin-top: 80px; text-align: center">-----Euphoria-----</h6>
 
   </div>
-
-  <h6 style="color: rgba(255,255,255,0); font-size: 5pt; margin-bottom: 0px; margin-top: 80px; text-align: center">-----Euphoria-----</h6>
-
-</div>
 
 </template>
 
@@ -105,41 +89,41 @@
   Vue.component('b-card', BCard);
 
   export default {
-      name: "Booklist",
-      data () {
-        return {
-          messagetitle: ' Book List ',
-          bookname:'',
-          author: '',
-          date:'',
-          booklistid: '',
-          booklistname: '',
-          username: '',
-          Cusername: '',
-          currentusername: '',
-          email: '',
-          comment: '',
-          useremail: '',
-          info: '',
-          booklists: [],
-          Bcomments: [],
-          info: [],
-          props: ['_id'],
-          errors: [],
-          columns: ['_id', 'bookname', 'author','date', 'remove'],
-          options: {
-            perPage: 10,
-            filterable: ['bookname', 'author'],
-            sortable:['date'],
-            headings: {
-              _id: 'ID',
-              bookname: 'Book Name',
-              author: 'Author',
-              date: 'Date'
-            }
+    name: "Booklist",
+    data () {
+      return {
+        messagetitle: ' Book List ',
+        bookname:'',
+        author: '',
+        date:'',
+        booklistid: '',
+        booklistname: '',
+        username: '',
+        currentusername: '',
+        email: '',
+        Cusername: '',
+        comment: '',
+        useremail: '',
+        info: '',
+        booklists: [],
+        Bcomments: [],
+        info: [],
+        props: ['_id'],
+        errors: [],
+        columns: ['_id', 'bookname', 'author','date'],
+        options: {
+          perPage: 10,
+          filterable: ['bookname', 'author'],
+          sortable:['date'],
+          headings: {
+            _id: 'ID',
+            bookname: 'Book Name',
+            author: 'Author',
+            date: 'Date'
           }
         }
-      },
+      }
+    },
     created () {
       this.loadBooklists();
       this.getMessageTitle();
@@ -182,11 +166,11 @@
       },
 
       clearName() {
-         this.bookname  = '';
-         this.author = '';
+        this.bookname  = '';
+        this.author = '';
       },
       clearComment() {
-         this.comment = '';
+        this.comment = '';
       },
       handleOk(evt) {
         evt.preventDefault();
@@ -377,7 +361,7 @@
     }
 
 
-    }
+  }
 </script>
 
 <style scoped>
@@ -505,9 +489,9 @@
   }
 
 
- div .comment-body {
-   margin-bottom: 15px;
- }
+  div .comment-body {
+    margin-bottom: 15px;
+  }
 
 
 

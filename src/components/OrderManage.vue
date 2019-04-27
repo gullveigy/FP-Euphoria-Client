@@ -32,7 +32,6 @@
   outline: none;
   height: 30px;
   border: 1px solid #eee;
-
 }
 .pagination-item {
   width: 30px;
@@ -45,7 +44,7 @@
 }
 
 .pagination-item:hover {
-    background-color: #eee;
+  background-color: #eee;
 }
 
 .order-table {
@@ -90,15 +89,15 @@
 }
 
 .information {
-    position: relative;
+  position: relative;
 }
 
 .bookcover {
-    position: absolute;
-    right: 10px;
-    top: 0px;
-    border: 1px solid #eee;
-    width: 120px;
+  position: absolute;
+  right: 10px;
+  top: 0px;
+  border: 1px solid #eee;
+  width: 120px;
 }
 
 .information-item {
@@ -121,91 +120,155 @@
   padding: 5px 10px;
 }
 .book-cover {
-	border: 1px solid #eee;
-	display: block;
-	margin: 0 auto;
+  border: 1px solid #eee;
+  display: block;
+  margin: 0 auto;
+  width: 70px;
 }
+.order-detail {
+  text-align: left;
+}
+.order-detail-item {
+  width: 100%;
+  height: 100%;
+}
+
+.detail-image {
+  width: 150px;
+  display: block;
+  margin: 0 auto;
+}
+.detail-name {
+  color: #000;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 20px;
+}
+.detail-box {
+  margin-top: 15px;
+}
+.next-icon {
+  margin: 0 auto;
+  text-align: center;
+  font-size: 30px;
+}
+.top-icon {
+  margin-bottom: 20px;
+}
+.n-box {
+  overflow: hidden;
+  position: relative;
+}
+.order-detail-wrapper {
+  position: absolute;
+  overflow: hidden;
+  transition: all 0.5s;
+}
+.detail-authors {
+  margin-top: 15px;
+  color: #333;
+}
+
+.n-dialog {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+
+}
+
+.order-detail-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: #fff;
+  border-radius: 5px;
+  min-height: 450px;
+  padding: 20px;
+}
+
 </style>
 
 <template>
   <div class="order-page">
-
     <div class="pagination flex-between">
       <div class="count-info flex-between">
         <input type="text" v-model="keyword" placeholder="select items">
         <div>{{totalCount}} order found</div>
       </div>
-      
 
       <div class="flex-between">
         <div class="target-page flex-between">
           <input type="number" v-model="userInputPageNum" :placeholder="currentPage">
-          <div class='' @click="goPage">per page</div>
+          <div class @click="goPage">per page</div>
         </div>
         <div class="flex-between">
-          <div class="pagination-item" 
-              @click="goPage('pre')"
-          >
-              <i class="el-icon-arrow-left"></i>
+          <div class="pagination-item" @click="goPage('pre')">
+            <i class="el-icon-arrow-left"></i>
           </div>
           <div class="pagination-item">{{currentPage}}</div>
           <div>of {{totalPage}}</div>
-          <div class="pagination-item"
-              @click="goPage('next')"
-          >
-              <i class="el-icon-arrow-right"></i>
+          <div class="pagination-item" @click="goPage('next')">
+            <i class="el-icon-arrow-right"></i>
           </div>
         </div>
       </div>
     </div>
 
     <div class="order-list">
-      <el-table 
+      <el-table
         v-loading="loading"
         :header-cell-style="{background:'rgb(80,74,68)',color:'#fff'}"
         element-loading-text="loading"
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.6)"
-        class="order-table" 
-        stripe :data="orderList" 
-    :default-sort="{prop: 'createtime', order: 'descending'}"
-        border>
-        <el-table-column prop="status" 
-    label="" 
-    width="70" 
-    :render-header="renderHeader"
-    fixed="left">
+        class="order-table"
+        stripe
+        :data="orderList"
+        :default-sort="{prop: 'createtime', order: 'descending'}"
+        border
+      >
+        <el-table-column prop="status" label width="70" :render-header="renderHeader" fixed="left">
           <template slot-scope="scope">
-            <div class="status-box status-finish" 
+            <div
+              class="status-box status-finish"
               @click="upDateStatus(scope.$index, 0)"
-              v-if="scope.row.status == 1">
+              v-if="scope.row.status == 1"
+            >
               <i class="el-icon-check"></i>
             </div>
-            <div class="status-box" 
-              @click="upDateStatus(scope.$index, 1)"
-              v-else></div>
+            <div class="status-box" @click="upDateStatus(scope.$index, 1)" v-else></div>
           </template>
         </el-table-column>
+        <el-table-column prop="bookList.length" label="Quantity" width="90"></el-table-column>
         <el-table-column prop="orderid" label="Order Id" width="160"></el-table-column>
         <el-table-column prop="status" label="Status" width="120">
           <template slot-scope="scope">
-                <div>{{scope.row.status == '1' ? "Processed" : "Untreated"}}</div>
+            <div>{{scope.row.status == '1' ? "Processed" : "Untreated"}}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="bookname" label="Book Name" width="160"></el-table-column>
+        <el-table-column prop="bookList[0].bookname" label="Book Name" width="160"></el-table-column>
         <el-table-column prop="bookcover" label="Bookcover" width="100">
           <template slot-scope="scope">
-            <img :src="scope.row.bookcover" class="book-cover" min-width="70" height="70">
+            <img :src="scope.row.bookcover" class="book-cover">
           </template>
         </el-table-column>
-        <el-table-column prop="authors" label="Authors" width="120"></el-table-column>
-        <el-table-column prop="price" label="Price" width="120"></el-table-column>
+        <el-table-column prop="bookList[0].authors" label="Authors" width="120"></el-table-column>
+        <el-table-column prop="bookList[0].price" label="Price" width="120"></el-table-column>
         <el-table-column prop="createtime" resizable label="Modiffied" width="120"></el-table-column>
         <el-table-column prop="username" label="Name of buyer" width="160"></el-table-column>
         <el-table-column prop="address" label="Buyer address" width="200"></el-table-column>
         <el-table-column prop="email" label="Buyer e-mail" width="140"></el-table-column>
         <el-table-column prop="phone" label="Phone" width="120"></el-table-column>
-        <el-table-column label="Action" width="120" fixed='right'>
+        <el-table-column label="Action" width="120" fixed="right">
           <template slot-scope="scope">
             <div
               class="detail-btn"
@@ -217,55 +280,33 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog 
-      title="ORDER INFORMATION" 
-      :visible.sync="dialogVisible" 
-      width="600px">
-      <div class="information">
-        <div class="information-item">
-          <div>Order id:</div>
-          <div>{{currentOrder.orderid}}</div>
+
+    <div class="n-dialog" v-if="dialogVisible" @click.self="dialogVisible = false; bookIndex = 1">
+      <div class="order-detail-container">
+        <div class="next-icon top-icon" @click="bookIndex = bookIndex - 1" v-if="bookIndex > 0">
+          <i class="fa fa-angle-double-up" aria-hidden="true"></i>
         </div>
-        <div class="information-item">
-          <div>Book name:</div>
-          <div>{{currentOrder.bookname}}</div>
+        <div class="n-box">
+            <img class="detail-image" :src="currentOrder.bookList[bookIndex].bookcover" alt>
+            <div class="detail-name">{{currentOrder.bookList[bookIndex].bookname}}</div>
+            <div class="detail-box">
+              <div>Quantity: {{currentOrder.bookList[bookIndex].num}}</div>
+              <div>Cost: {{currentOrder.bookList[bookIndex].price}}</div>
+              <div>Status: {{currentOrder.status == '1' ? "Processed" : "Untreated"}}</div>
+            </div>
+            <div class="detail-authors">
+              <span v-for="(author, index) of currentOrder.bookList[bookIndex].authors" :key="index">{{author}}</span>
+            </div>
         </div>
-        <div class="information-item">
-          <div>Authors:</div>
-		  <div>
-			<span v-for="(item, index) of currentOrder.authors" :key="index">{{item}}</span>
-		  </div>
+        <div
+          class="next-icon"
+          @click="setBookIndex"
+          v-if="currentOrder.bookList && currentOrder.bookList.length - 1 > bookIndex"
+        >
+          <i class="fa fa-angle-double-down"></i>
         </div>
-        <div class="information-item">
-          <div>Price:</div>
-          <div>{{currentOrder.price}}</div>
-        </div>
-        <div class="information-item">
-          <div>Time:</div>
-          <div>{{currentOrder.createtime}}</div>
-        </div>
-        <div class="information-item">
-          <div>Name of buyer:</div>
-          <div>{{currentOrder.username}}</div>
-        </div>
-        <div class="information-item">
-          <div>Buyer address:</div>
-          <div>{{currentOrder.address}}</div>
-        </div>
-        <div class="information-item">
-          <div>Buyer e-mail:</div>
-          <div>{{currentOrder.email}}</div>
-        </div>
-        <div class="information-item">
-          <div>Phone:</div>
-          <div>{{currentOrder.phone}}</div>
-        </div>
-        <img class="bookcover" :src="currentOrder.bookcover" alt="">
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">Determine</el-button>
-      </span>
-    </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -273,7 +314,7 @@
 import orderservice from "@/services/orderservice";
 import firebase from "firebase";
 import userservice from "@/services/userservice";
-import { close } from 'fs';
+import { close } from "fs";
 
 export default {
   name: "OrderManage",
@@ -286,83 +327,103 @@ export default {
       totalPage: 0,
       currentOrder: "",
       dialogVisible: false,
-      userInputPageNum: '',
+      userInputPageNum: "",
       loading: false,
-	  currentUserInfo: '',
-	  keyword: ''
+      currentUserInfo: "",
+      keyword: "",
+      bookIndex: 0
     };
   },
   watch: {
     totalCount(val) {
       this.totalPage = Math.ceil(val / this.pageSize);
-	},
-	keyword(val) {
-		this.fuzzySearch(val)
-		if(val = '') {
-			this.getOrderList()
-		}
-	}
+    },
+    keyword(val) {
+      this.fuzzySearch(val);
+      if ((val = "")) {
+        this.getOrderList();
+      }
+    },
+    dialogVisible(val) {
+      if (!val) {
+        this.bookIndex = 0;
+      }
+    }
   },
+
   mounted() {
     this.getUserInfo();
   },
   methods: {
+    setBookIndex() {
+      if (this.bookIndex < this.currentOrder.bookList.length - 1) {
+        this.bookIndex = this.bookIndex + 1;
+      }
+    },
+
+    getAuthors(data) {
+      console.log(data, typeof data);
+      return data[0].bookname;
+    },
 
     getUserInfo() {
-        let vm = this
-        if( !firebase.auth().currentUser ) {
-            this.$message("YOU NEED TO LOGIN FIRST")
-            return 
-        }
-        let useremail = firebase.auth().currentUser.email;
-        userservice.fetchOneUser(useremail).then(response => {
+      let vm = this;
+      if (!firebase.auth().currentUser) {
+        this.$message("YOU NEED TO LOGIN FIRST");
+        return;
+      }
+      let useremail = firebase.auth().currentUser.email;
+      userservice.fetchOneUser(useremail).then(response => {
         if (response) {
-            this.currentUserInfo = response.data[0]
-            vm.getOrderList()
+          this.currentUserInfo = response.data[0];
+          vm.getOrderList();
         }
       });
     },
 
     goPage(page) {
-        if(page == 'pre') {
-            if(this.currentPage <= 1) {
-                this.$message("It's page one.");
-                return
-            } else {
-				this.currentPage = this.currentPage - 1
-				if( this.keyword.length > 0 ) {
-					this.fuzzySearch()
-				} else {
-					this.getOrderList()
-				}
-            }
-        } else if(page == 'next') {
-            if(this.currentPage >= this.totalPage) {
-                this.$message("It's the last page.");
-                return
-            } else {
-                this.currentPage = this.currentPage + 1
-				if( this.keyword.length > 0 ) {
-					this.fuzzySearch()
-				} else {
-					this.getOrderList()
-				}
-            }
+      if (page == "pre") {
+        if (this.currentPage <= 1) {
+          this.$message("It's page one.");
+          return;
         } else {
-            if(1 <= this.userInputPageNum && this.userInputPageNum <= this.totalPage) {
-                this.currentPage = this.userInputPageNum
-				if( this.keyword.length > 0 ) {
-					this.fuzzySearch()
-				} else {
-					this.getOrderList()
-				}
-				this.userInputPageNum = ''
-            } else {
-				alert('Invalid page number')
-			}
+          this.currentPage = this.currentPage - 1;
+          if (this.keyword.length > 0) {
+            this.fuzzySearch();
+          } else {
+            this.getOrderList();
+          }
         }
+      } else if (page == "next") {
+        if (this.currentPage >= this.totalPage) {
+          this.$message("It's the last page.");
+          return;
+        } else {
+          this.currentPage = this.currentPage + 1;
+          if (this.keyword.length > 0) {
+            this.fuzzySearch();
+          } else {
+            this.getOrderList();
+          }
+        }
+      } else {
+        if (
+          1 <= this.userInputPageNum &&
+          this.userInputPageNum <= this.totalPage
+        ) {
+          this.currentPage = this.userInputPageNum;
+          if (this.keyword.length > 0) {
+            this.fuzzySearch();
+          } else {
+            this.getOrderList();
+          }
+          this.userInputPageNum = "";
+        } else {
+          alert("Invalid page number");
+        }
+      }
     },
-    
+
     deleteRow(index, rows) {
       this.currentOrder = rows[index];
       this.dialogVisible = true;
@@ -370,58 +431,70 @@ export default {
 
     upDateStatus(index, status) {
       let data = {
-          order_id: this.orderList[index]._id,
-          status: status
-      }
+        order_id: this.orderList[index]._id,
+        status: status
+      };
 
       orderservice.setOrderStatus(data).then(res => {
-        console.log( res )
-      })
-      this.$set(this.orderList[index], 'status', status)
+        console.log(res);
+      });
+      this.$set(this.orderList[index], "status", status);
     },
 
     getOrderList() {
-        this.loading = true
- 
-        orderservice.orderList(this.pageSize, this.currentPage).then(res => {
-            if (res.data.data) {
-                this.orderList = res.data.data;
-                this.totalCount = res.data.totalCount;
-            }
-            this.loading = false
-        })
-        .catch( () => {
-            this.loading = false
-        })
-	},
-	
-	fuzzySearch(keyword) {
-		this.loading = true
+      this.loading = true;
 
-		orderservice.ordersearch(this.pageSize, 1, keyword).then( res => {
-            if (res.data.data) {
-                this.orderList = res.data.data;
-                this.totalCount = res.data.totalCount;
+      orderservice
+        .orderList(this.pageSize, this.currentPage)
+        .then(res => {
+          if (res.data.data) {
+            let arr = res.data.data;
+            for (let i in arr) {
+              arr[i].bookcover = arr[i].bookList[0] ? arr[i].bookList[0].bookcover : "";
             }
-            this.loading = false
-		})
-		.catch( () => {
-            this.loading = false
+            this.orderList = arr;
+            console.log('arr', this.orderList);
+            this.totalCount = res.data.totalCount;
+          }
+          this.loading = false;
         })
-	},
+        .catch((err) => {
+          console.log(err);
+          alert("qwe")
+          this.loading = false;
+        });
+    },
 
-	renderHeader (h,{column}) { 
-		return h(
-		'div',
-		[ 
-		h('span', column.label),
-		h('i', {
-			class:'el-icon-caret-bottom',
-			style:'color:#fff;margin-left:5px;'
-		})
-		],
-	);
-	}
+    fuzzySearch(keyword) {
+      this.loading = true;
+
+      orderservice
+        .ordersearch(this.pageSize, 1, keyword)
+        .then(res => {
+          if (res.data.data) {
+            let arr = res.data.data;
+            for (let i in arr) {
+              arr[i].bookcover = arr[i].bookList[0] ? arr[i].bookList[0].bookcover : "";
+            }
+            this.orderList = arr;
+            this.totalCount = res.data.totalCount;
+          }
+          this.loading = false;
+        })
+        .catch(() => {
+          this.loading = false;
+        });
+    },
+
+    renderHeader(h, { column }) {
+      return h("div", [
+        h("span", column.label),
+        h("i", {
+          class: "el-icon-caret-bottom",
+          style: "color:#fff;margin-left:5px;"
+        })
+      ]);
+    }
   }
 };
 </script>

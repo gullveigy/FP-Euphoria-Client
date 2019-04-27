@@ -114,6 +114,21 @@
 
             discussionservice.addNewPost(newpost);
           }
+        } else {
+          this.$swal({
+            title: 'You need to login first!',
+            text: 'You can\'t do this action',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'OK, Go login',
+            cancelButtonText: 'No, thx',
+            showCloseButton: true
+            // showLoaderOnConfirm: true
+          }).then((result) => {
+            if (result.value === true) {
+              this.$router.replace('login')
+            } else this.$router.replace('/addpost')
+          })
         }
 
       }

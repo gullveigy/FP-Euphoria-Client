@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" @mousemove="mouseMove">
     <b-navbar toggleable="md" variant="dark" type="dark">
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
@@ -23,6 +23,7 @@
             <i class="fa fa-commenting" style="padding: 5px"> ContactMessage</i>
           </b-nav-item>
           <b-nav-item to="/purchased"><i class="fa fa-shopping-cart" style="padding: 5px"> Purchased</i></b-nav-item>
+          <b-nav-item to="/orderbag"><i class="fa fa-shopping-cart" style="padding: 5px"> OrderBag</i></b-nav-item>
           <b-nav-item to="/userprofile"><i class="fa fa-info" style="padding: 5px"> Personal</i></b-nav-item>
           <b-nav-item to="/login"><i class="fa fa-sign-in" style="padding: 5px"> Login </i></b-nav-item>
           <b-nav-item><i class="fa fa-sign-out" style="padding: 5px" @click="Logout"> Logout </i></b-nav-item>
@@ -43,6 +44,11 @@ import { baseUrl } from './components/utils/config.js'
 
 export default {
   name: 'App',
+  data() {
+    return {
+      timmer: null,
+    }
+  },
   computed: {
     userInfo() {
       return this.$store.state.userInfo
@@ -55,6 +61,31 @@ export default {
     this.showUserInfo()
   },
   methods: {
+    mouseMove(){
+      let path = ['/login']
+      if(!path.includes(this.$route.path)) { 
+        clearTimeout(this.timmer);
+        this.setTimmer();
+      }
+    },
+ 
+    setTimmer(){
+      let vm = this
+      this.timmer=setTimeout(()=>{
+        this.$notify.error({
+          title: 'Login Timeout',
+          message: 'Login Again Please'
+        });
+        firebase.auth().signOut().then(() => {
+          this.$router.replace('login')
+        })
+        vm.$store.commit("SET_USERINFO", '');
+        vm.$router.push({
+          path: "/login",
+        });
+ 
+      },30*60*1000);
+    },
 
     showUserInfo() {
       if(firebase.auth().currentUser) {

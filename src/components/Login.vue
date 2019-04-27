@@ -28,13 +28,7 @@
 
           </div>
 
-          <div class="forgot">
-
-            <a href="/#">Forgot password?</a>
-
-          </div>
-
-          <button type="submit" class="btn btn-primary" @click="login">Login</button>
+          <button type="submit" class="btn btn-primary" @click="login" style="margin-top: 20px">Login</button>
 
         </form>
       </div>

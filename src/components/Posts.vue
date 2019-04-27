@@ -88,8 +88,9 @@
                       <p style="margin-top: 8px; font-size: 15px; margin-left: 20px">
                         {{discomment.content}}
                       </p>
-                      <i class="fa fa-thumbs-up" style="margin-left: 10px; margin-right: 20px" v-on:click="UpvoteforDiscomment(discomment._id)">({{discomment.upvotes}})</i>
-                      <i class="fa fa-thumbs-down" v-on:click="DownvoteforDiscomment(discomment._id)">({{discomment.downvotes}})</i>
+                      <i class="fa fa-thumbs-up" style="margin-left: 10px; margin-right: 20px; cursor: pointer" v-on:click="UpvoteforDiscomment(discomment._id)">({{discomment.upvotes}})</i>
+                      <i class="fa fa-thumbs-down" style="cursor: pointer" v-on:click="DownvoteforDiscomment(discomment._id)">({{discomment.downvotes}})</i>
+                      <i class="fa fa-trash" v-show="CCurrentuser === discomment.username" style="margin-left: 20px; cursor: pointer" v-on:click="deletediscomment(discomment._id)"></i>
                     </div>
 
                   </div>
@@ -139,13 +140,15 @@
         useremail: '',
         file: '',
         replytext: '',
-        currentuser: firebase.auth().currentUser
+        currentuser: firebase.auth().currentUser,
+        CCurrentuser: ''
       }
     },
     created () {
       this.getOneDiscussion();
       this.getDiscomment();
       this.addDiscomment();
+      this.getCuserInfo();
     },
     components: {
       'profilecard': ProfileCard,
@@ -153,6 +156,24 @@
     },
 
     methods: {
+      getCuserInfo:function (){
+        var useremail = firebase.auth().currentUser.email;
+        // console.log(useremail);
+        userservice.fetchOneUser(useremail).then(response => {
+          if (response) {
+            console.log(response);
+            this.info = response.data;
+            this.CCurrentuser = this.info[0].username;
+            this.email = this.info[0].email;
+            this.signature = this.info[0].signature;
+            this.followers = this.info[0].followers;
+            this.userid = this.info[0]._id;
+            this.avatar = this.info[0].avatar;
+
+            console.log(this.CCurrentuser);
+          }
+        });
+      },
       getOneDiscussion: function () {
         discussionservice.fetchOneDiscussion(this.$route.params.id)
           .then(response => {
@@ -199,6 +220,42 @@
 
           })
       },
+
+
+      deletediscomment: function (id) {
+        this.$swal({
+          title: 'Are you totaly sure?',
+          text: 'You can\'t Undo this action',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'OK Delete it',
+          cancelButtonText: 'Cancel',
+          showCloseButton: true
+          // showLoaderOnConfirm: true
+        }).then((result) => {
+          console.log('SWAL Result : ' + result.value);
+          if (result.value === true) {
+            discommentservice.deleteDiscomment(id)
+              .then(response => {
+                // JSON responses are automatically parsed.
+                this.message = response.data;
+                console.log(this.message);
+                this.getDiscomment();
+                // Vue.nextTick(() => this.$refs.vuetable.refresh())
+                this.$swal('Deleted', 'You successfully deleted this comment ' + JSON.stringify(response.data, null, 5), 'success')
+              })
+              .catch(error => {
+                this.$swal('ERROR', 'Something went wrong trying to Delete ' + error, 'error')
+                this.errors.push(error);
+                console.log(error)
+              })
+          } else {
+            console.log('SWAL Else Result : ' + result.value);
+            this.$swal('Cancelled', 'Your Comment still Counts!', 'info')
+          }
+        })
+      },
+
 
       addDiscomment: function () {
         if (firebase.auth().currentUser) {

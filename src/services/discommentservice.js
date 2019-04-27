@@ -18,6 +18,10 @@ export default {
   downvotefor (id) {
     return Api().put(`/discomments/${id}/downvote`)
   },
+
+  deleteDiscomment (id) {
+    return Api().delete(`/discomments/${id}`)
+  }
 }
 
 

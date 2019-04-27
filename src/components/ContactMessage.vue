@@ -7,11 +7,19 @@
 
     <b-card no-body class="mb-1" v-for="(Cmessage, index) in Cmessages" :key="index">
       <b-card-header header-tag="header" class="p-1" role="tab">
-        <b-button style="background-color: gray; border-color: gray" block href="#" v-b-toggle.accordion-1 variant="info">{{Cmessage.title}}</b-button>
+        <b-button style="background-color: gray; border-color: gray" block href="#" v-b-toggle.accordion-1 variant="info">{{Cmessage.title.substring(0,50)}}...</b-button>
       </b-card-header>
       <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
         <b-card-body   style="background-color: beige; width: 792.01px; margin-left: auto; margin-right: auto; border-radius:5px">
-          <b-card-text style="color: black"><h5>Username:</h5> <h6>{{Cmessage.username}}</h6> <h5> Message Date:</h5> <h6>{{Cmessage.date}}</h6> <h5> Email:</h5> <h6>{{Cmessage.email}}</h6></b-card-text>
+          <b-card-text style="color: black"><h5>Username:</h5>
+                                       <h6>{{Cmessage.username}}</h6>
+                                       <hr>
+                                       <h5> Message Date:</h5>
+                                       <h6>{{Cmessage.date}}</h6>
+                                       <hr>
+                                       <h5> Email:</h5>
+                                       <h6>{{Cmessage.email}}</h6></b-card-text>
+                                       <hr>
           <b-card-text style="color: black"><h5> Message Content: </h5>{{ Cmessage.content}}</b-card-text>
 
 
@@ -87,7 +95,7 @@
 
 
   h3 {
-    color: antiquewhite;
+    color: #1c221f;
     font-size: 30pt;
     margin-bottom: 50px;
     margin-top: 40px;

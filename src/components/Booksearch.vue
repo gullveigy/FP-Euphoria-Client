@@ -23,12 +23,13 @@
           </li>
           <b-button 
             variant="outline-dark" 
-            style="width: 82.88px; margin-top: 10px; margin-bottom: 10px" 
+            style="width: 165px; margin-top: 10px; margin-bottom: 10px" 
             @click="openBooklistDialog(index)">Booklist</b-button>
           <router-link  target="_blank"  :to="{name:'Bookpreview',path:'bookPreview', query:{bookId:list[index].id}}">
-          <b-button variant="outline-dark" style="margin-top: 10px; margin-bottom: 10px">Preview</b-button>
+            <b-button variant="outline-dark" style="width: 165px; margin-top: 10px; margin-bottom: 10px">Preview</b-button>
           </router-link>
-          <b-button variant="outline-dark"  @click="openPayDialog(index)" style="width: 82.88px; margin-top: 10px; margin-bottom: 10px">Buy</b-button>
+          <b-button variant="outline-dark"  @click="addShoppingCar(index)" style="width: 165px; margin-top: 10px; margin-bottom: 10px">Add ShoppingCart</b-button>
+          <b-button variant="outline-dark"  @click="openPayDialog(index)" style="width: 165px; margin-top: 10px; margin-bottom: 10px">Buy</b-button>
         </ul>
       </li>
 			<el-dialog :visible.sync="dialogFormVisible"  id="pay-dialog" center>
@@ -46,6 +47,7 @@
 <script>
 import payment from '@/components/Payment.vue';
 import AddBooklist from '@/components/AddBooklist.vue';
+import shoppingcartservice from "@/services/shoppingcartservice";
 export default {
   name: 'Booksearch',
 	components: {payment,AddBooklist},
@@ -63,8 +65,18 @@ export default {
 	    list:[]
     }
   },
+
+  computed: {
+    userInfo() {
+        return this.$store.state.userInfo
+    },
+  },
  methods:{
     openPayDialog(index){
+      if(!this.userInfo) {
+        this.$router.replace('login')
+        return 
+      }
       var title = this.list[index].volumeInfo.title;
       var imgUrl = 	this.list[index].volumeInfo.imageLinks.thumbnail;
       var price =  "No for sale!";
@@ -80,6 +92,36 @@ export default {
       this.dialogFormVisible = true;
     },
 
+    addShoppingCar( index ) {
+      console.log( index )
+      if(!this.userInfo) {
+        this.$router.replace('login')
+        return 
+      }
+      let data = {
+        bookname: this.list[index].volumeInfo.title,
+        bookcover: this.list[index].volumeInfo.imageLinks.thumbnail,
+        authors: this.list[index].volumeInfo.authors,
+        price: 'No for sale!',
+        userid: this.userInfo._id
+      }
+
+      shoppingcartservice.addShppping(data)
+        .then( res => {
+          console.log(res);
+          if( res.data.data ) {
+            this.$message({
+              message: 'Shopping cart has been added.',
+              type: 'success'
+            });
+          }
+        })
+        .catch( err => {
+          console.log(err)
+        })
+
+    },
+
     openBooklistDialog(index) {
       var title = this.list[index].volumeInfo.title;
       var imgUrl = 	this.list[index].volumeInfo.imageLinks.thumbnail;
@@ -92,7 +134,6 @@ export default {
         title:title,
         author:author,
         imgUrl:imgUrl,
-
       };
       this.BdialogFormVisible = true;
     },
@@ -138,5 +179,8 @@ export default {
 
   li {
     list-style: none;
+  }
+  .search-result--info {
+    padding: 0;
   }
 </style>
