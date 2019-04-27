@@ -13,17 +13,17 @@
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item to="/ordermanage"
-            v-if="userInfo && userInfo.usertype === 'admin'" 
+            v-if="userInfo && userInfo.usertype === 'admin'"
           >
             <i class="fa fa-file-text" style="padding: 5px"> OrderManage</i>
           </b-nav-item>
           <b-nav-item to="/contactmessage"
-            v-if="userInfo && userInfo.usertype === 'admin'" 
+            v-if="userInfo && userInfo.usertype === 'admin'"
           >
             <i class="fa fa-commenting" style="padding: 5px"> ContactMessage</i>
           </b-nav-item>
           <b-nav-item to="/purchased"><i class="fa fa-shopping-cart" style="padding: 5px"> Purchased</i></b-nav-item>
-          <b-nav-item to="/orderbag"><i class="fa fa-shopping-cart" style="padding: 5px"> OrderBag</i></b-nav-item>
+          <b-nav-item to="/orderbag"><i class="fa fa-shopping-cart" style="padding: 5px"> Shopping Cart</i></b-nav-item>
           <b-nav-item to="/userprofile"><i class="fa fa-info" style="padding: 5px"> Personal</i></b-nav-item>
           <b-nav-item to="/login"><i class="fa fa-sign-in" style="padding: 5px"> Login </i></b-nav-item>
           <b-nav-item><i class="fa fa-sign-out" style="padding: 5px" @click="Logout"> Logout </i></b-nav-item>
@@ -63,12 +63,12 @@ export default {
   methods: {
     mouseMove(){
       let path = ['/login']
-      if(!path.includes(this.$route.path)) { 
+      if(!path.includes(this.$route.path)) {
         clearTimeout(this.timmer);
         this.setTimmer();
       }
     },
- 
+
     setTimmer(){
       let vm = this
       this.timmer=setTimeout(()=>{
@@ -83,7 +83,7 @@ export default {
         vm.$router.push({
           path: "/login",
         });
- 
+
       },30*60*1000);
     },
 
